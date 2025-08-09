@@ -5,6 +5,7 @@
 \title{Preprocess the data from a list describing the profile LMM model}
 \usage{
 profileGLMM_preprocess(
+  regtype,
   covList,
   dataframe,
   nC,
@@ -28,6 +29,8 @@ profileGLMM_preprocess(
 \item  RE bool indicating if FE have an intercept
 \item  FE bool indicating if RE have an intercept
 \item  Lat bool indicating if Latent have an intercept}}
+
+\item{regType}{A string, current possibilities: linear or probit}
 }
 \value{
 A list with\itemize{
@@ -38,7 +41,8 @@ A list with\itemize{
                  \item  nRE int, number of stat units of RE
                  \item  qRE int, number of covariates of RE}
 \item prior a list with all the specification of the default prior used
-\item theta a list with a default set of parameters to start the chain, drawn from the prior}
+\item theta a list with a default set of parameters to start the chain, drawn from the prior
+\item regType an int. Currently 0 for linear, 1 for probit}
 }
 \description{
 Preprocess the data from a list describing the profile LMM model

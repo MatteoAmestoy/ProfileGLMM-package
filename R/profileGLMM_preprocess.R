@@ -1,6 +1,6 @@
 
 #' Preprocess the data from a list describing the profile LMM model
-#'
+#' @param regType A string, current possibilities: linear or probit
 #' @param covList A list with fields:\itemize{
 #' \item  FE fixed effect covariates names/index in dataframe
 #' \item  RE random effect covariates names/index in dataframe
@@ -23,37 +23,29 @@
 #'                  \item  nRE int, number of stat units of RE
 #'                  \item  qRE int, number of covariates of RE}
 #' \item prior a list with all the specification of the default prior used
-#' \item theta a list with a default set of parameters to start the chain, drawn from the prior}
+#' \item theta a list with a default set of parameters to start the chain, drawn from the prior
+#' \item regType an int. Currently 0 for linear, 1 for probit}
 #' @export
 #'
 #' @examples
-profileGLMM_preprocess <- function(covList, dataframe, nC, intercept = list(FE=T,RE=T,Lat =T)) {
-  ' Preprocess the data from a LMER formula
--------Input:
-      - dataframe: dataframe on which to apply the formula
-      - covList: list with Fields:
-                    - FE fixed effect covariates names/index in dataframe
-                    - RE random effect covariates names/index in dataframe
-                    - Lat latent effect covariates names/index in dataframe
-                    - Assign assignement variable categorical not supported yet
-                    - REunit statistical unit of the RE colomn name/index
-                    - Y outcome (Continuous)
-      - intercept (optionnal): list with fields
-                    - RE bool indicating if FE have an intercept
-                    - FE bool indicating if RE have an intercept
-                    - Lat bool indicating if Latent have an intercept
--------Output:
-      - d dictionary with [XFE,XRE,XLat,U,ZRE] design matrices
-      - [[params]] list of the parameters of the data
-            - n int nb of obs
-            - qFE lint, number of covariates of FE
-            - nRE int, number of stat units of RE
-            - qRE int, number of covariates of RE
-  Note:
-  '
+profileGLMM_preprocess <- function(regtype, covList, dataframe, nC, intercept = list(FE=T,RE=T,Lat =T)) {
 
   d = {}
   d$names = {}
+  if (regtype == 'linear'){
+    rT = 0
+    d$Y = drop(dataframe[,covList$Y])
+  }else if(regtype == 'probit'){
+    rT = 1
+    d$Y = factor(dataframe[,covList$Y])
+    if( length(levels(d$Y))==2){
+      print(paste0('Reference category (Y = 1) for Y = ',levels(d$Y)[1]))
+    d$Y = (d$Y==levels(d$Y)[1])}else{
+      stop(paste0(covList$Y,' has ',length(levels(d$Y)),' levels, while 2 expected.'))
+    }
+  }else{stop('Regression type not supported please choose out of linear or probit.')}
+
+
   d$XFE = encodeCat(dataframe[,covList$FE, drop = FALSE])
   d$names$FE = colnames(d$XFE)
   if (intercept$FE){d$XFE = cbind(1,d$XFE)
@@ -76,8 +68,6 @@ profileGLMM_preprocess <- function(covList, dataframe, nC, intercept = list(FE=T
   d$U = as.matrix(d$U)
   d$names$U = colnames(d$U)
 
-  d$Y = drop(dataframe[,covList$Y])
-
   d$ZRE = as.numeric(factor(dataframe[,covList$REunit]))-1
 
   params = {}
@@ -96,6 +86,7 @@ profileGLMM_preprocess <- function(covList, dataframe, nC, intercept = list(FE=T
   return(list(d = d,
               params = params,
               prior = prior,
-              theta = theta))
+              theta = theta,
+              regType = rT))
 
 }

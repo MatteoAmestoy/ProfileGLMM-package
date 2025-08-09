@@ -37,7 +37,8 @@ profileGLMM_Gibbs = function(proLMMObj,nIt,nBurnIn){
                         proLMMObj$prior$Lat$Phi,
                         proLMMObj$prior$Lat$eta,
                         proLMMObj$prior$DP$scale,
-                        proLMMObj$prior$DP$shape)
+                        proLMMObj$prior$DP$shape,
+                        proLMMObj$regType)
 
 
   return(gibbs_out)
