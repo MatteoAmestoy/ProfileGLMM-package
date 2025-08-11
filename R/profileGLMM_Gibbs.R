@@ -10,6 +10,9 @@
 #' @examples
 profileGLMM_Gibbs = function(proLMMObj,nIt,nBurnIn){
 
+
+  if(proLMMObj$regType==1){proLMMObj$theta$sig2=1}
+
   gibbs_out = GSLoopCPP(nIt, nBurnIn,
                         proLMMObj$params$nC,
                         proLMMObj$d$Y,

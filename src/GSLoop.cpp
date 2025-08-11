@@ -93,11 +93,11 @@ List GSLoopCPP(
                 storeIdx += 1;
             }
         }
-    } else if (regType == 1) { // Corrected from `regType == 0`
+    } else if (regType == 1) {
         for (int it = 0; it < nIt; it++) {
             thetaLMM.updateProbit(data, thetaAssign.Z, thetaAssign.cluster_count);
             thetaClus.update(data, thetaAssign.Z);
-            thetaAssign.updateProbit(data, data.Y , thetaLMM.YRE, thetaLMM.YFE, thetaLMM.sig2,
+            thetaAssign.updateProbit(data, thetaLMM.YRE, thetaLMM.YFE, thetaLMM.sig2,
                                      thetaClus.Sigma,
                                      thetaClus.mu,
                                      thetaLMM.gamma);

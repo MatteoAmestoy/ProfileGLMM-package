@@ -81,7 +81,7 @@ void ParamAssign::updateLinear(DataObj data, arma::vec Y, double sig2, arma::cub
   non_0_clust = non_0_clust_loc;
 }
 
-void ParamAssign::updateProbit(DataObj data, arma::vec Y, arma::vec YFE, arma::vec YRE, double sig2, arma::cube SigmaGM, arma::mat muGM, arma::mat gammaL) {
+void ParamAssign::updateProbit(DataObj data, arma::vec YFE, arma::vec YRE, double sig2, arma::cube SigmaGM, arma::mat muGM, arma::mat gammaL) {
   // Probit update logic
   // Update logic for linear model
   double VarAcc;
@@ -104,7 +104,8 @@ void ParamAssign::updateProbit(DataObj data, arma::vec Y, arma::vec YFE, arma::v
   for(int c = 0; c < data.nC; c++) {
     lp0(c) = log(p0(c)) - arma::log_det_sympd(SigmaGM.slice(c)) / 2;
     SigmaGMinvC.slice(c) = arma::inv(SigmaGM.slice(c));
-    predC.col(c) =  1 - arma::normcdf((YFE + YRE + data.XL * gammaL.col(c))%(Y-0.5)*2, 0, sig2);
+    predC.col(c) = arma::normcdf(YFE + YRE + data.XL * gammaL.col(c),0,1);//prob that Y=1
+    predC.col(c) = predC.col(c)%data.Y+(1-data.Y)%(1-predC.col(c));
   }
   arma::vec logprob(data.nC);
   for(int o = 0; o < data.n; o++) {
@@ -113,7 +114,7 @@ void ParamAssign::updateProbit(DataObj data, arma::vec Y, arma::vec YFE, arma::v
     for(int c = 0; c < data.nC; c++) {
       logprob(c) += -arma::as_scalar((data.U.row(o) - muGM.col(c).t()) * SigmaGMinvC.slice(c) * (data.U.row(o).t() - muGM.col(c))) / 2.0;
       logprob(c) = exp(logprob(c));
-      logprob(c) = logprob(c)* predC(o, c);
+      logprob(c) = logprob(c)*predC(o,c);
       nconst += logprob(c);
     }
     double u = runif(1, 0, 1)(0) * nconst;

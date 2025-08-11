@@ -6,7 +6,6 @@
 ParamGLMM::ParamGLMM(arma::vec beta_, double sig2_, arma::mat gamma_, arma::mat WLat_, arma::mat WRE_, double a_, double b_, double lambda_, arma::mat PhiLat_, double etaLat_, arma::mat PhiRE_, double etaRE_, arma::mat XFE) {
   int n = XFE.n_rows;
   beta = beta_;
-  sig2 = sig2_;
   gamma = gamma_;
   WLat = WLat_;
   WRE = WRE_;
@@ -23,7 +22,8 @@ ParamGLMM::ParamGLMM(arma::vec beta_, double sig2_, arma::mat gamma_, arma::mat 
   YLat = YLat_;
   YRE = YRE_;
   prob_score = prob_score_;
-  YFE = XFE * beta;
+  YFE = YRE_;
+  sig2 = sig2_;
 }
 
 void ParamGLMM::updateLinear(DataObj data, arma::ivec Z, arma::vec cluster_count) {
@@ -96,10 +96,9 @@ void ParamGLMM::updateProbit(DataObj data, arma::ivec Z, arma::vec cluster_count
   for(int o = 0; o < data.n; o++){
     amin = -pow(10,6)*(1-data.Y(o));
     amax = pow(10,6)*data.Y(o);
-    prob_score(o) = r_truncnorm(mu_(o), sig2, amin,
+    prob_score(o) = r_truncnorm(mu_(o), 1, amin,
                amax);
   }
-  // We start by jointly updating the latent and fixed effect parts of the model and then do the RE
   arma::vec Y = prob_score - YRE;
   arma::mat W_m = arma::inv(WLat);
   arma::mat omega = PhiLat;
@@ -139,8 +138,12 @@ void ParamGLMM::updateProbit(DataObj data, arma::ivec Z, arma::vec cluster_count
     omega += gamma.col(c) * gamma.col(c).t();
   }
   WLat = riwish(data.nC + etaLat, (omega + omega.t()) / 2.0);
-  double b_ = b + arma::as_scalar((Y - YFE - YLat).t() * (Y - YFE - YLat)) / 2.0;
-  sig2 = 1.0 / (Rcpp::rgamma(1, a + data.n / 2.0, 1 / b_)(0));
+  // double b_ = b + arma::as_scalar((Y - YFE - YLat).t() * (Y - YFE - YLat)) / 2.0;
+
+  // Rcout << "The value of ur-------------------------------- : " <<b_ << "\n";
+  // Rcout << "The value of ur : " <<a << "\n";
+  // Rcout << "The value of ur ----------------------------------: " <<b << "\n";
+  // sig2 = 1.0 / (Rcpp::rgamma(1, a + data.n / 2.0, 1 / b_)(0));
   // Move to Random effects
   Y = prob_score - YFE - YLat;
   arma::mat gammaRE(data.qRE, data.nRE);
