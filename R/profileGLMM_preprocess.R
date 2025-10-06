@@ -39,42 +39,70 @@ profileGLMM_preprocess <- function(regtype, covList, dataframe, nC, intercept = 
     rT = 1
     d$Y = factor(dataframe[,covList$Y])
     if( length(levels(d$Y))==2){
-      print(paste0('Reference category (Y = 1) for Y = ',levels(d$Y)[1]))
-    d$Y = (d$Y==levels(d$Y)[1])}else{
-      stop(paste0(covList$Y,' has ',length(levels(d$Y)),' levels, while 2 expected.'))
-    }
+      print(paste0('Reference category (Y = 1) for Y = ',levels(d$Y)[2]))
+      d$Y = (d$Y==levels(d$Y)[2])}else{
+        stop(paste0(covList$Y,' has ',length(levels(d$Y)),' levels, while 2 expected.'))
+      }
   }else{stop('Regression type not supported please choose out of linear or probit.')}
 
+  n = length(d$Y)
 
-  d$XFE = encodeCat(dataframe[,covList$FE, drop = FALSE])
-  d$names$FE = colnames(d$XFE)
-  if (intercept$FE){d$XFE = cbind(1,d$XFE)
-  d$names$FE= c('Intercept',d$names$FE) }
-  d$XFE = as.matrix(d$XFE)
+  if (length(covList$FE)!=0){
+    d$XFE = encodeCat(dataframe[,covList$FE, drop = FALSE])
+    d$names$FE = colnames(d$XFE)
+    if (intercept$FE){
+      d$XFE = cbind(1,d$XFE)
+      d$names$FE = c('Intercept',d$names$FE)}
+    d$XFE = as.matrix(d$XFE)}else if(intercept$FE){
+      d$names$FE = c('Intercept')
+      d$XFE = as.matrix(rep(1,n))
+    }else{
+      stop('Error: no fixed effects provided')
+    }
 
-  d$XRE = encodeCat(dataframe[,covList$RE, drop = FALSE])
-  d$names$RE = colnames(d$XRE)
-  if (intercept$RE){d$XRE = cbind(1,d$XRE)
-  d$names$RE= c('Intercept',d$names$RE) }
-  d$XRE = as.matrix(d$XRE)
 
-  d$XLat = encodeCat(dataframe[,covList$Lat, drop = FALSE])
-  d$names$Lat = colnames(d$XLat)
-  if (intercept$Lat){d$XLat = cbind(1,d$XLat)
-  d$names$Lat= c('Intercept',d$names$Lat) }
-  d$XLat = as.matrix(d$XLat)
+  if (length(covList$RE)!=0){
+    d$XRE = encodeCat(dataframe[,covList$RE, drop = FALSE])
+    d$names$RE = colnames(d$XRE)
+    if (intercept$RE){d$XRE = cbind(1,d$XRE)
+    d$names$RE= c('Intercept',d$names$RE) }
+    d$XRE = as.matrix(d$XRE)}else if(intercept$RE){
+      d$names$RE = c('Intercept')
+      d$XRE = as.matrix(rep(1,n))
+    }else{
+      print('Warning: no random effects provided')
+      d$XRE = NULL
+      d$names$RE = NULL
+    }
+
+  if (length(covList$Lat)!=0){
+    d$XLat = encodeCat(dataframe[,covList$Lat, drop = FALSE])
+    d$names$Lat = colnames(d$XLat)
+    if (intercept$Lat){d$XLat = cbind(1,d$XLat)
+    d$names$Lat= c('Intercept',d$names$Lat) }
+    d$XLat = as.matrix(d$XLat)}else if(intercept$Lat){
+      d$names$Lat = c('Intercept')
+      d$XLat = as.matrix(rep(1,n))
+    }else{
+      stop('ERROR: no cluster effect provided')
+    }
 
   d$U = dataframe[,covList$Assign, drop = FALSE]
   d$U = as.matrix(d$U)
   d$names$U = colnames(d$U)
-
-  d$ZRE = as.numeric(factor(dataframe[,covList$REunit]))-1
-
+  if (length(covList$REunit)!=0){
+    d$ZRE = as.numeric(factor(dataframe[,covList$REunit]))-1
+  }else {
+    d$ZRE = as.matrix(rep(-1,n))
+  }
   params = {}
   params$n = dim(d$XFE)[1]
   params$nRE = max(d$ZRE)+1
   params$qFE = dim(d$XFE)[2]
-  params$qRE = dim(d$XRE)[2]
+  if(!is.null(dim(d$XRE)[2])){
+    params$qRE = dim(d$XRE)[2]} else{
+      params$qRE = 0
+    }
   params$qLat = dim(d$XLat)[2]
   params$qU = dim(d$U)[2]
   params$nC = nC

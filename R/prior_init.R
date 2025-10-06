@@ -2,11 +2,7 @@
 #' Initialise the priors of the model
 #'
 #' @param params A list with Fields: \itemize{
-#' \item FE fixed effect covariates names/index in dataframe
-#' \item RE random effect covariates names/index in dataframe
-#' \item REunit statistical unit of the RE colomn name/index
-#' \item Lat latent effect covariates names/index in dataframe
-#' \item Assign assignement variable categorical not supported yet}
+#' \item TBW}
 #' @param nC An integer, the number of possible clusters
 #'
 #' @returns A list of the priors parameters for each variable
@@ -16,15 +12,9 @@ prior_init = function(params, nC){
   ' initialise the priors of the model
 -------Input:
       - params: list with Fields:
-                    - FE fixed effect covariates names/index in dataframe
-                    - RE random effect covariates names/index in dataframe
-                    - REunit statistical unit of the RE colomn name/index
-                    - Lat latent effect covariates names/index in dataframe
-                    - Assign assignement variable categorical not supported yet
+                    - TBW
       - priorInit (optionnal): list with fields
-                    - RE bool indicating if FE have an intercept
-                    - FE bool indicating if RE have an intercept
-                    - Lat bool indicating if Latent have an intercept
+                    - TBW
 -------Output:
   Note:
   '
@@ -35,9 +25,14 @@ prior_init = function(params, nC){
   prior$FE$a = 10**(-6)
   prior$FE$b = 10**(-6)
 
-  prior$RE = {}
-  prior$RE$Phi = diag(params$qRE)
-  prior$RE$eta = params$qRE
+  if(params$qRE>0){
+    prior$RE = {}
+    prior$RE$Phi = diag(params$qRE)
+    prior$RE$eta = params$qRE}else{
+      prior$RE = {}
+      prior$RE$Phi = diag(1)
+      prior$RE$eta = -1
+    }
 
   prior$assign = {}
   prior$assign$lambda = 1

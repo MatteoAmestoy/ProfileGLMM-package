@@ -81,7 +81,7 @@ void ParamAssign::updateLinear(DataObj data, arma::vec Y, double sig2, arma::cub
   non_0_clust = non_0_clust_loc;
 }
 
-void ParamAssign::updateProbit(DataObj data, arma::vec YFE, arma::vec YRE, double sig2, arma::cube SigmaGM, arma::mat muGM, arma::mat gammaL) {
+void ParamAssign::updateProbit(DataObj data, arma::vec YFE, arma::vec YRE, arma::cube SigmaGM, arma::mat muGM, arma::mat gammaL) {
   // Probit update logic
   // Update logic for linear model
   double VarAcc;

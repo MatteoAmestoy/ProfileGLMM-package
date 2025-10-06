@@ -15,6 +15,7 @@ List GSLoopCPP(
     int nIt,
     int nBurnIn,
     int nC,
+    int qRE,
     arma::vec Y,
     arma::mat XFE,
     arma::mat XRE,
@@ -43,92 +44,96 @@ List GSLoopCPP(
     double shape,
     int regType) {
 
-    // Data object
-    DataObj data(Y, XFE, XRE, XL, U, ZRE, nC);
+  // Data object
+  DataObj data(Y, XFE, XRE, XL, U, ZRE, qRE, nC);
 
-    // Initialize theta
-    ParamGLMM thetaLMM(beta, sig2, gammaLat, WLat, WRE, a, b, lambdaFE, PhiLat, etaLat, PhiRE, etaRE, data.XFE);
-    ParamClus thetaClus(lam0, mu0, nu0, Psi0, muClus, SigmaClus);
+  // Initialize theta
+  ParamGLMM thetaLMM(beta, sig2, gammaLat, WLat, WRE, a, b, lambdaFE, PhiLat, etaLat, PhiRE, etaRE, data.XFE);
+  ParamClus thetaClus(lam0, mu0, nu0, Psi0, muClus, SigmaClus);
 
-    arma::vec p0(nC);
-    arma::ivec Z(data.n);
-    Z = arma::randi(data.n, arma::distr_param(0, nC - 1));
+  arma::vec p0(nC);
+  arma::ivec Z(data.n);
+  Z = arma::randi(data.n, arma::distr_param(0, nC - 1));
 
-    ParamAssign thetaAssign(Z, p0, scale, shape);
+  ParamAssign thetaAssign(Z, p0, scale, shape);
 
-    int nStore = nIt - nBurnIn - 1;
-    arma::cube StoreWL(data.qL, data.qL, nStore);
-    arma::cube StoreWRE(data.qRE, data.qRE, nStore);
-    arma::imat StoreZ(data.n, nStore);
-    arma::cube StoremuClus(data.qU, nC, nStore);
-    arma::mat StoreBeta(data.qFE, nStore);
-    arma::vec Storesig2(nStore);
-    arma::vec Storealpha(nStore);
-    arma::cube StoreGamma(data.qL, nC, nStore);
-    arma::field<arma::cube> StorePhiClus(nStore);
-    int storeIdx = 0;
+  int nStore = nIt - nBurnIn - 1;
+  arma::cube StoreWL(data.qL, data.qL, nStore);
 
-    if (regType == 0) {
-        for (int it = 0; it < nIt; it++) {
-            thetaLMM.updateLinear(data, thetaAssign.Z, thetaAssign.cluster_count);
-            thetaClus.update(data, thetaAssign.Z);
-            thetaAssign.updateLinear(data, data.Y - thetaLMM.YRE - thetaLMM.YFE, thetaLMM.sig2,
-                                     thetaClus.Sigma,
-                                     thetaClus.mu,
-                                     thetaLMM.gamma);
-            if ((it % 1000) == 0) {
-                Rcout << "Iteration: " << it << "\n";
-                Rcout << "Nb of non 0 clusters: " << thetaAssign.non_0_clust << "\n";
-            }
-            if (it > nBurnIn) {
-                StoreWL.slice(storeIdx) = thetaLMM.WLat;
-                StoreWRE.slice(storeIdx) = thetaLMM.WRE;
-                StorePhiClus(storeIdx) = thetaClus.Sigma;
-                StoreZ.col(storeIdx) = thetaAssign.Z;
-                StoremuClus.slice(storeIdx) = thetaClus.mu;
-                StoreBeta.col(storeIdx) = thetaLMM.beta;
-                StoreGamma.slice(storeIdx) = thetaLMM.gamma;
-                Storesig2(storeIdx) = thetaLMM.sig2;
-                Storealpha(storeIdx) = thetaAssign.alpha;
-                storeIdx += 1;
-            }
-        }
-    } else if (regType == 1) {
-        for (int it = 0; it < nIt; it++) {
-            thetaLMM.updateProbit(data, thetaAssign.Z, thetaAssign.cluster_count);
-            thetaClus.update(data, thetaAssign.Z);
-            thetaAssign.updateProbit(data, thetaLMM.YRE, thetaLMM.YFE, thetaLMM.sig2,
-                                     thetaClus.Sigma,
-                                     thetaClus.mu,
-                                     thetaLMM.gamma);
-            if ((it % 1000) == 0) {
-                Rcout << "Iteration: " << it << "\n";
-                Rcout << "Nb of non 0 clusters: " << thetaAssign.non_0_clust << "\n";
-            }
-            if (it > nBurnIn) {
-                StoreWL.slice(storeIdx) = thetaLMM.WLat;
-                StoreWRE.slice(storeIdx) = thetaLMM.WRE;
-                StorePhiClus(storeIdx) = thetaClus.Sigma;
-                StoreZ.col(storeIdx) = thetaAssign.Z;
-                StoremuClus.slice(storeIdx) = thetaClus.mu;
-                StoreBeta.col(storeIdx) = thetaLMM.beta;
-                StoreGamma.slice(storeIdx) = thetaLMM.gamma;
-                Storesig2(storeIdx) = thetaLMM.sig2;
-                Storealpha(storeIdx) = thetaAssign.alpha;
-                storeIdx += 1;
-            }
-        }
+  arma::cube StoreWRE(std::max(1,data.qRE), std::max(1,data.qRE), nStore);
+
+  arma::imat StoreZ(data.n, nStore);
+  arma::cube StoremuClus(data.qU, nC, nStore);
+  arma::mat StoreBeta(data.qFE, nStore);
+  arma::vec Storesig2(nStore);
+  arma::vec Storealpha(nStore);
+  arma::cube StoreGamma(data.qL, nC, nStore);
+  arma::field<arma::cube> StorePhiClus(nStore);
+  int storeIdx = 0;
+
+  if (regType == 0) {
+    for (int it = 0; it < nIt; it++) {
+      thetaLMM.updateLinear(data, thetaAssign.Z, thetaAssign.cluster_count);
+      thetaClus.update(data, thetaAssign.Z);
+      thetaAssign.updateLinear(data, data.Y - thetaLMM.YRE - thetaLMM.YFE, thetaLMM.sig2,
+                               thetaClus.Sigma,
+                               thetaClus.mu,
+                               thetaLMM.gamma);
+      if ((it % 1000) == 0) {
+        Rcout << "Iteration: " << it << "\n";
+        Rcout << "Nb of non 0 clusters: " << thetaAssign.non_0_clust << "\n";
+      }
+      if (it > nBurnIn) {
+        StoreWL.slice(storeIdx) = thetaLMM.WLat;
+        if(data.qRE>0){
+          StoreWRE.slice(storeIdx) = thetaLMM.WRE;}
+        StorePhiClus(storeIdx) = thetaClus.Sigma;
+        StoreZ.col(storeIdx) = thetaAssign.Z;
+        StoremuClus.slice(storeIdx) = thetaClus.mu;
+        StoreBeta.col(storeIdx) = thetaLMM.beta;
+        StoreGamma.slice(storeIdx) = thetaLMM.gamma;
+        Storesig2(storeIdx) = thetaLMM.sig2;
+        Storealpha(storeIdx) = thetaAssign.alpha;
+        storeIdx += 1;
+      }
     }
+  } else if (regType == 1) {
+    for (int it = 0; it < nIt; it++) {
+      thetaLMM.updateProbit(data, thetaAssign.Z, thetaAssign.cluster_count);
+      thetaClus.update(data, thetaAssign.Z);
+      thetaAssign.updateProbit(data, thetaLMM.YRE, thetaLMM.YFE,
+                               thetaClus.Sigma,
+                               thetaClus.mu,
+                               thetaLMM.gamma);
+      if ((it % 1000) == 0) {
+        Rcout << "Iteration: " << it << "\n";
+        Rcout << "Nb of non 0 clusters: " << thetaAssign.non_0_clust << "\n";
+      }
+      if (it > nBurnIn) {
+        StoreWL.slice(storeIdx) = thetaLMM.WLat;
+        if(data.qRE>0){
+          StoreWRE.slice(storeIdx) = thetaLMM.WRE;}
+        StorePhiClus(storeIdx) = thetaClus.Sigma;
+        StoreZ.col(storeIdx) = thetaAssign.Z;
+        StoremuClus.slice(storeIdx) = thetaClus.mu;
+        StoreBeta.col(storeIdx) = thetaLMM.beta;
+        StoreGamma.slice(storeIdx) = thetaLMM.gamma;
+        Storesig2(storeIdx) = thetaLMM.sig2;
+        Storealpha(storeIdx) = thetaAssign.alpha;
+        storeIdx += 1;
+      }
+    }
+  }
 
-    List Store = List::create(Named("WL") = StoreWL,
-                              _["WRE"] = StoreWRE,
-                              _["Z"] = StoreZ,
-                              _["muClus"] = StoremuClus,
-                              _["PhiClus"] = StorePhiClus,
-                              _["beta"] = StoreBeta,
-                              _["sig2"] = Storesig2,
-                              _["alpha"] = Storealpha,
-                              _["gamma"] = StoreGamma);
+  List Store = List::create(Named("WL") = StoreWL,
+                            _["WRE"] = StoreWRE,
+                            _["Z"] = StoreZ,
+                            _["muClus"] = StoremuClus,
+                            _["PhiClus"] = StorePhiClus,
+                            _["beta"] = StoreBeta,
+                            _["sig2"] = Storesig2,
+                            _["alpha"] = Storealpha,
+                            _["gamma"] = StoreGamma);
 
-    return Store;
+  return Store;
 }

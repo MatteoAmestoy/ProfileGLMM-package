@@ -23,5 +23,5 @@ public:
   int nRE;
   int qU;
   int nC;
-  DataObj(arma::vec Y, arma::mat XFE, arma::mat XRE, arma::mat XL, arma::mat U, arma::vec ZRE, int nC);
+  DataObj(arma::vec Y, arma::mat XFE, arma::mat XRE, arma::mat XL, arma::mat U, arma::vec ZRE, int qRE, int nC);
 };

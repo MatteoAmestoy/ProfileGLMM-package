@@ -14,8 +14,15 @@ theta_init = function(prior,params,nC){
 
   theta = {}
   theta$sig2 = rgamma(1,1,1)#rgamma(1,prior$FE$a,prior$FE$b)
+
   theta$betaFE = rnorm(params$qFE,0,theta$sig2/sqrt(prior$FE$lambda))
-  theta$SigRE = rinvwishart(prior$RE$eta,prior$RE$Phi) #
+
+  if(params$qRE>0){
+    theta$SigRE = rinvwishart(prior$RE$eta,prior$RE$Phi) #
+  }else{
+    theta$SigRE = diag(1)
+  }
+
   theta$SigLat = rinvwishart(prior$Lat$eta,prior$Lat$Phi) #
   theta$betaLat = rnorm(params$qLat,0,theta$sig2/sqrt(prior$FE$lambda))
 

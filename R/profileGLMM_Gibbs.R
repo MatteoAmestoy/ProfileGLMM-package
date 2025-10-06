@@ -12,9 +12,10 @@ profileGLMM_Gibbs = function(proLMMObj,nIt,nBurnIn){
 
 
   if(proLMMObj$regType==1){proLMMObj$theta$sig2=1}
-
+  if (is.null(proLMMObj$d$XRE)){proLMMObj$d$XRE = matrix() }
   gibbs_out = GSLoopCPP(nIt, nBurnIn,
                         proLMMObj$params$nC,
+                        proLMMObj$params$qRE,
                         proLMMObj$d$Y,
                         proLMMObj$d$XFE,
                         proLMMObj$d$XRE,
