@@ -16,17 +16,21 @@ List GSLoopCPP(
     int nBurnIn,
     int nC,
     int qRE,
+    int qUCont, //---------------------
     arma::vec Y,
     arma::mat XFE,
     arma::mat XRE,
     arma::mat XL,
-    arma::mat U,
+    arma::mat UCont,//---------------------
+    arma::mat UCat,//---------------------
+    arma::vec catInd,//---------------------
     arma::vec ZRE,
     arma::vec beta,
     double sig2,
     arma::mat WRE,
     arma::mat muClus,
     arma::cube SigmaClus,
+    arma::cube pvecClus,//---------------------
     arma::mat WLat,
     arma::mat gammaLat,
     double a,
@@ -38,6 +42,7 @@ List GSLoopCPP(
     arma::vec mu0,
     double nu0,
     arma::mat Psi0,
+    arma::vec alpha0,//---------------------
     arma::mat PhiLat,
     double etaLat,
     double scale,
@@ -45,11 +50,13 @@ List GSLoopCPP(
     int regType) {
 
   // Data object
-  DataObj data(Y, XFE, XRE, XL, U, ZRE, qRE, nC);
+  DataObj data(Y, XFE, XRE, XL, UCont, UCat, catInd, ZRE, qRE, qUCont, nC);
 
   // Initialize theta
-  ParamGLMM thetaLMM(beta, sig2, gammaLat, WLat, WRE, a, b, lambdaFE, PhiLat, etaLat, PhiRE, etaRE, data.XFE);
-  ParamClus thetaClus(lam0, mu0, nu0, Psi0, muClus, SigmaClus);
+  ParamGLMM thetaLMM(beta, sig2, gammaLat, WLat, WRE, a, b, lambdaFE, PhiLat,
+                     etaLat, PhiRE, etaRE, data.XFE);
+  ParamClus thetaClus(lam0, mu0, nu0, Psi0, muClus, SigmaClus,
+                      alpha0, pvecClus, data.nUCat);
 
   arma::vec p0(nC);
   arma::ivec Z(data.n);

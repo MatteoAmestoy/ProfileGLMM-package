@@ -24,19 +24,36 @@ theta_init = function(prior,params,nC){
   }
 
   theta$SigLat = rinvwishart(prior$Lat$eta,prior$Lat$Phi) #
-  theta$betaLat = rnorm(params$qLat,0,theta$sig2/sqrt(prior$FE$lambda))
+  # theta$betaLat = rnorm(params$qLat,0,theta$sig2/sqrt(prior$FE$lambda))
 
   theta$gammaLat = matrix(0,nrow = params$qLat,ncol = nC)
   for (c in 1:nC){
     theta$gammaLat[,c] = rmvn(1,rep(0,params$qLat),theta$SigLat)}
 
-  theta$SigmaClus = array(0, dim = c(params$qU,params$qU,nC))
-  for (c in 1:nC){
-    theta$SigmaClus[,,c] = rinvwishart(prior$assign$nu,prior$assign$Psi)}
 
-  theta$muClus = matrix(0,nrow = params$qU,ncol = nC)
-  for (c in 1:nC){
-    theta$muClus[,c] = rmvn(1,prior$assign$mu,theta$SigmaClus[,,c]/prior$assign$lambda)*0}
+  theta$ClusCont = {}
+  if(params$qUCont>0){
+    theta$ClusCont$Sigma = array(0, dim = c(params$qUCont,params$qUCont,nC))
+    for (c in 1:nC){
+      theta$ClusCont$Sigma[,,c] = rinvwishart(prior$assign$nu,prior$assign$Cont$Psi)
+    }
+    theta$ClusCont$mu = matrix(0,nrow = params$qUCont,ncol = nC)
+    for (c in 1:nC){
+      theta$ClusCont$mu[,c] = rmvn(1,prior$assign$Cont$mu,theta$ClusCont$Sigma[,,c]/prior$assign$Cont$lambda)}
+  } else{
+    theta$ClusCont$Sigma = diag(1)
+    theta$ClusCont$mu = matrix(0,nrow = 1,ncol = nC)
+  }
+
+  theta$ClusCat = {}
+  if(params$qUCat>0){
+    ncat = 1
+    for (cat in params$qUCat){
+      theta$ClusCat[ncat]= rdirichlet(nC, prior$assign$alpha)
+      ncat = ncat + 1
+    }
+
+  }
 
   return(theta)
 }

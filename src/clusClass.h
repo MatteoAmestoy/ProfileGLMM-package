@@ -13,6 +13,9 @@ public:
   arma::mat Psi0;
   arma::mat mu;
   arma::cube Sigma;
-  ParamClus(double lam0, arma::vec mu0, double nu0, arma::mat Psi0, arma::mat mu, arma::cube Sigma);
+  List alpha0;
+  arma::cube pvec;
+  ParamClus(double lam0, arma::vec mu0, double nu0, arma::mat Psi0, arma::mat mu, arma::cube Sigma,
+            arma::vec alpha0,arma::cube pvec, arma::vec nUCat);
   void update(DataObj data, arma::ivec Z);
 };

@@ -5,7 +5,10 @@
 #' \item  FE fixed effect covariates names/index in dataframe
 #' \item  RE random effect covariates names/index in dataframe
 #' \item  Lat latent effect covariates names/index in dataframe
-#' \item  Assign assignement variable categorical not supported yet
+#' \item  Assign assignement variables list with fields:\itemize{
+#' \item  Cont Continuous variables names/index in dataframe
+#' \item  Cat Categorical variables names/index in dataframe
+#' }
 #' \item  REunit statistical unit of the RE colomn name/index
 #' \item  Y outcome (Continuous)}
 #' @param dataframe A dataframe containing outcome anf covariates
@@ -16,12 +19,17 @@
 #' \item  Lat bool indicating if Latent have an intercept}
 #'
 #' @returns A list with\itemize{
-#' \item  d dictionary with  [XFE,XRE,XLat,U,ZRE] design matrices
+#' \item  d dictionary with  [XFE,XRE,XLat,UCont,UCat,ZRE] design matrices
 #' \item  [[params]] list of the parameters of the data\itemize{
 #'                  \item  n int nb of obs
 #'                  \item  qFE lint, number of covariates of FE
 #'                  \item  nRE int, number of stat units of RE
-#'                  \item  qRE int, number of covariates of RE}
+#'                  \item  qRE int, number of covariates of RE
+#'                  \item  qLat int, number of covariates interacting with the
+#'                                   latent clusters
+#'                  \item  qUCont int, number of continuous clustering covariates
+#'                  \item  qUCat int, number of categorical clustering covariates
+#'                  \item  nC int, maximal number of clusters}
 #' \item prior a list with all the specification of the default prior used
 #' \item theta a list with a default set of parameters to start the chain, drawn from the prior
 #' \item regType an int. Currently 0 for linear, 1 for probit}
@@ -32,6 +40,8 @@ profileGLMM_preprocess <- function(regtype, covList, dataframe, nC, intercept = 
 
   d = {}
   d$names = {}
+  params = {}
+
   if (regtype == 'linear'){
     rT = 0
     d$Y = drop(dataframe[,covList$Y])
@@ -86,16 +96,35 @@ profileGLMM_preprocess <- function(regtype, covList, dataframe, nC, intercept = 
     }else{
       stop('ERROR: no cluster effect provided')
     }
+  U_Empty = TRUE
+  if(length(covList$Assign$Cat)!=0){
+    d$names$UCat = covList$Assign$Cat
+    U_Empty = FALSE
+    d$UCat = {}
+    params$qUCat = c()
+    for(cat in covList$Assign$Cat){
+      d$UCat$cat = encodeCat(as,factor(dataframe[,cat, drop = FALSE]))
+      d$UCat$cat = cbind(1-rowSums(d$UCat$cat,dims = 2),d$UCat$cat)
+    params$qUCat = c(params$qUCat,dim(d$UCat$cat)[2])
+    }
+  } else{
+    params$qUCat = c()
+  }
+  if(length(covList$Assign$Cont)!=0){
+    d$UCont = dataframe[,covList$Assign$Cont, drop = FALSE]
+    d$names$UCont = colnames(d$UCont)
+    U_Empty = FALSE
+  }
+  if(U_Empty){
+    stop('ERROR: no clustering variables provided')}
 
-  d$U = dataframe[,covList$Assign, drop = FALSE]
-  d$U = as.matrix(d$U)
-  d$names$U = colnames(d$U)
+
   if (length(covList$REunit)!=0){
     d$ZRE = as.numeric(factor(dataframe[,covList$REunit]))-1
   }else {
     d$ZRE = as.matrix(rep(-1,n))
   }
-  params = {}
+
   params$n = dim(d$XFE)[1]
   params$nRE = max(d$ZRE)+1
   params$qFE = dim(d$XFE)[2]
@@ -103,8 +132,15 @@ profileGLMM_preprocess <- function(regtype, covList, dataframe, nC, intercept = 
     params$qRE = dim(d$XRE)[2]} else{
       params$qRE = 0
     }
+  if(!is.null(dim(d$UCont)[2])){
+    params$qUCont = dim(d$UCont)[2]} else{
+      params$qUCont = 0
+    }
+  if(!is.null(dim(d$UCat)[2])){
+    params$qUCat = dim(d$UCat)[2]} else{
+      params$qUCat = 0
+    }
   params$qLat = dim(d$XLat)[2]
-  params$qU = dim(d$U)[2]
   params$nC = nC
 
   prior = prior_init(params, nC)
