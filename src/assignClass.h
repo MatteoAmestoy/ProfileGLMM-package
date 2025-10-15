@@ -16,6 +16,8 @@ public:
   int non_0_clust;
   arma::sp_umat adjMat;
   ParamAssign(arma::ivec Z, arma::vec p0, double scale, double shape);
-  void updateLinear(DataObj data, arma::vec Y, double sig2, arma::cube SigmaGM, arma::mat muGM, arma::mat gammaL, arma::cube pvec);
-  void updateProbit(DataObj data, arma::vec YFE, arma::vec YRE, arma::cube SigmaGM, arma::mat muGM, arma::mat gammaL, arma::cube pvec);
+  void updateLinear(DataObj data, arma::vec Y, double sig2, arma::cube SigmaGM,
+                    arma::mat muGM, arma::mat gammaL, arma::mat pvec);
+  void updateProbit(DataObj data, arma::vec YFE, arma::vec YRE, arma::cube SigmaGM,
+                    arma::mat muGM, arma::mat gammaL, arma::mat pvec);
 };

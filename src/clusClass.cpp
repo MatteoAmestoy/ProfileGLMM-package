@@ -3,24 +3,21 @@
 
 // ParamClus implementation
 ParamClus::ParamClus(double lam0_, arma::vec mu0_, double nu0_, arma::mat Psi0_, arma::mat mu_, arma::cube Sigma_,
-                     arma::vec alpha0_,arma::cube pvec_, arma::vec nUCat) {
+                     arma::vec alpha0_,arma::mat pVec_) {
   lam0 = lam0_;
   nu0 = nu0_;
   mu0 = mu0_;
   Psi0 = Psi0_;
   mu = mu_;
   Sigma = Sigma_;
-  pvec = pvec_;
-  int nCat = alpha0_.n_elem;
-  for(int i = 0; i < nCat; i++) {
-      alpha0[i] = alpha0_[i]*arma::ones(nUCat[i]);
-    }
+  pVec = pVec_;
+  alpha0 = alpha0_;
 }
 
 void ParamClus::update(DataObj data, arma::ivec Z) {
-  arma::mat EUc(data.qU, data.nC);
+  arma::mat EUc(data.qUCont, data.nC);
   arma::vec nCvec(data.nC);
-  arma::cube vUc(data.qU, data.qU, data.nC);
+  arma::cube vUc(data.qUCont, data.qUCont, data.nC);
   EUc.fill(0);
   vUc.fill(0);
 
@@ -50,12 +47,22 @@ void ParamClus::update(DataObj data, arma::ivec Z) {
     }
   }
   if (data.UCatBool){
+
+    //Build the current count per cluster
+    arma::mat p(data.UCat.n_cols,data.nC);
     for(int c = 0; c < data.nC; c++) {
       arma::uvec  idx = arma::find(Z == c);
-      for (int cat = 0; cat < data.nUCat; cat++) {
-        arma::vec  p =  sum(data.UCat[cat].rows(idx),0);
-        pVec.slice(cat).col(c) = rdirichlet_cpp(p+alpha0[cat]);
+      p.col(c) = sum(data.UCat.rows(idx),0);
+    }
+
+
+    for(int c = 0; c < data.nC; c++) {
+      arma::vec p_ = p.col(c);
+      for (int cat = 0; cat < data.nCat; cat++) {
+        arma::uvec idxCat = arma::find(data.catInd == cat);
+        p_(idxCat) = rdirichlet_cpp(p_(idxCat)+alpha0(cat)*arma::ones(data.nUCat(cat)));
       }
+      pVec.col(c) = p_;
     }
   }
 }

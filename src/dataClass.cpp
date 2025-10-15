@@ -2,17 +2,20 @@
 // DataObj implementation
 
 DataObj::DataObj(arma::vec Y_, arma::mat XFE_, arma::mat XRE_, arma::mat XL_, arma::mat UCont_,
-                 arma::mat UCat_, arma::vec catInd_, arma::vec ZRE_, int qRE_ ,int qUCont_ , int nC_) {
+                 arma::mat UCat_, arma::vec catInd_, arma::vec ZRE_, int qRE_ ,
+                 int qUCont_ , int nC_) {
   Y = Y_;
   XRE = XRE_;
   XFE = XFE_;
-  nUCat = catInd_.max()+1;
+  catInd = catInd_;
+  nCat = catInd_.max()+1;
   UCatBool  = false;
-  if (nUCat>0){
+  if (nCat>0){
     UCatBool= true;
-    for( int cat = 0; cat < nUCat; cat++){
+    UCat = UCat_;
+    for( int cat = 0; cat < nCat; cat++){
       arma::uvec idx = arma::find(catInd_ == cat);
-      UCat[cat] = UCat_.rows(idx);
+      nUCat(cat) = idx.n_elem;
     }
   }
   XL = XL_;

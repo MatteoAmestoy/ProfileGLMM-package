@@ -12,8 +12,8 @@ Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
 // GSLoopCPP
-List GSLoopCPP(int nIt, int nBurnIn, int nC, int qRE, arma::vec Y, arma::mat XFE, arma::mat XRE, arma::mat XL, arma::mat U, arma::vec ZRE, arma::vec beta, double sig2, arma::mat WRE, arma::mat muClus, arma::cube SigmaClus, arma::mat WLat, arma::mat gammaLat, double a, double b, double lambdaFE, arma::mat PhiRE, double etaRE, double lam0, arma::vec mu0, double nu0, arma::mat Psi0, arma::mat PhiLat, double etaLat, double scale, double shape, int regType);
-RcppExport SEXP _ProfileGLMM_GSLoopCPP(SEXP nItSEXP, SEXP nBurnInSEXP, SEXP nCSEXP, SEXP qRESEXP, SEXP YSEXP, SEXP XFESEXP, SEXP XRESEXP, SEXP XLSEXP, SEXP USEXP, SEXP ZRESEXP, SEXP betaSEXP, SEXP sig2SEXP, SEXP WRESEXP, SEXP muClusSEXP, SEXP SigmaClusSEXP, SEXP WLatSEXP, SEXP gammaLatSEXP, SEXP aSEXP, SEXP bSEXP, SEXP lambdaFESEXP, SEXP PhiRESEXP, SEXP etaRESEXP, SEXP lam0SEXP, SEXP mu0SEXP, SEXP nu0SEXP, SEXP Psi0SEXP, SEXP PhiLatSEXP, SEXP etaLatSEXP, SEXP scaleSEXP, SEXP shapeSEXP, SEXP regTypeSEXP) {
+List GSLoopCPP(int nIt, int nBurnIn, int nC, int qRE, int qUCont, arma::vec Y, arma::mat XFE, arma::mat XRE, arma::mat XL, arma::mat UCont, arma::mat UCat, arma::vec catInd, arma::vec ZRE, arma::vec beta, double sig2, arma::mat WRE, arma::mat muClus, arma::cube SigmaClus, arma::mat pvecClus, arma::mat WLat, arma::mat gammaLat, double a, double b, double lambdaFE, arma::mat PhiRE, double etaRE, double lam0, arma::vec mu0, double nu0, arma::mat Psi0, arma::vec alpha0, arma::mat PhiLat, double etaLat, double scale, double shape, int regType);
+RcppExport SEXP _ProfileGLMM_GSLoopCPP(SEXP nItSEXP, SEXP nBurnInSEXP, SEXP nCSEXP, SEXP qRESEXP, SEXP qUContSEXP, SEXP YSEXP, SEXP XFESEXP, SEXP XRESEXP, SEXP XLSEXP, SEXP UContSEXP, SEXP UCatSEXP, SEXP catIndSEXP, SEXP ZRESEXP, SEXP betaSEXP, SEXP sig2SEXP, SEXP WRESEXP, SEXP muClusSEXP, SEXP SigmaClusSEXP, SEXP pvecClusSEXP, SEXP WLatSEXP, SEXP gammaLatSEXP, SEXP aSEXP, SEXP bSEXP, SEXP lambdaFESEXP, SEXP PhiRESEXP, SEXP etaRESEXP, SEXP lam0SEXP, SEXP mu0SEXP, SEXP nu0SEXP, SEXP Psi0SEXP, SEXP alpha0SEXP, SEXP PhiLatSEXP, SEXP etaLatSEXP, SEXP scaleSEXP, SEXP shapeSEXP, SEXP regTypeSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -21,17 +21,21 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< int >::type nBurnIn(nBurnInSEXP);
     Rcpp::traits::input_parameter< int >::type nC(nCSEXP);
     Rcpp::traits::input_parameter< int >::type qRE(qRESEXP);
+    Rcpp::traits::input_parameter< int >::type qUCont(qUContSEXP);
     Rcpp::traits::input_parameter< arma::vec >::type Y(YSEXP);
     Rcpp::traits::input_parameter< arma::mat >::type XFE(XFESEXP);
     Rcpp::traits::input_parameter< arma::mat >::type XRE(XRESEXP);
     Rcpp::traits::input_parameter< arma::mat >::type XL(XLSEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type U(USEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type UCont(UContSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type UCat(UCatSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type catInd(catIndSEXP);
     Rcpp::traits::input_parameter< arma::vec >::type ZRE(ZRESEXP);
     Rcpp::traits::input_parameter< arma::vec >::type beta(betaSEXP);
     Rcpp::traits::input_parameter< double >::type sig2(sig2SEXP);
     Rcpp::traits::input_parameter< arma::mat >::type WRE(WRESEXP);
     Rcpp::traits::input_parameter< arma::mat >::type muClus(muClusSEXP);
     Rcpp::traits::input_parameter< arma::cube >::type SigmaClus(SigmaClusSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type pvecClus(pvecClusSEXP);
     Rcpp::traits::input_parameter< arma::mat >::type WLat(WLatSEXP);
     Rcpp::traits::input_parameter< arma::mat >::type gammaLat(gammaLatSEXP);
     Rcpp::traits::input_parameter< double >::type a(aSEXP);
@@ -43,18 +47,19 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< arma::vec >::type mu0(mu0SEXP);
     Rcpp::traits::input_parameter< double >::type nu0(nu0SEXP);
     Rcpp::traits::input_parameter< arma::mat >::type Psi0(Psi0SEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type alpha0(alpha0SEXP);
     Rcpp::traits::input_parameter< arma::mat >::type PhiLat(PhiLatSEXP);
     Rcpp::traits::input_parameter< double >::type etaLat(etaLatSEXP);
     Rcpp::traits::input_parameter< double >::type scale(scaleSEXP);
     Rcpp::traits::input_parameter< double >::type shape(shapeSEXP);
     Rcpp::traits::input_parameter< int >::type regType(regTypeSEXP);
-    rcpp_result_gen = Rcpp::wrap(GSLoopCPP(nIt, nBurnIn, nC, qRE, Y, XFE, XRE, XL, U, ZRE, beta, sig2, WRE, muClus, SigmaClus, WLat, gammaLat, a, b, lambdaFE, PhiRE, etaRE, lam0, mu0, nu0, Psi0, PhiLat, etaLat, scale, shape, regType));
+    rcpp_result_gen = Rcpp::wrap(GSLoopCPP(nIt, nBurnIn, nC, qRE, qUCont, Y, XFE, XRE, XL, UCont, UCat, catInd, ZRE, beta, sig2, WRE, muClus, SigmaClus, pvecClus, WLat, gammaLat, a, b, lambdaFE, PhiRE, etaRE, lam0, mu0, nu0, Psi0, alpha0, PhiLat, etaLat, scale, shape, regType));
     return rcpp_result_gen;
 END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_ProfileGLMM_GSLoopCPP", (DL_FUNC) &_ProfileGLMM_GSLoopCPP, 31},
+    {"_ProfileGLMM_GSLoopCPP", (DL_FUNC) &_ProfileGLMM_GSLoopCPP, 36},
     {NULL, NULL, 0}
 };
 

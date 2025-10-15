@@ -26,7 +26,7 @@ ParamAssign::ParamAssign(arma::ivec Z_, arma::vec p0_, double scale_, double sha
 }
 
 void ParamAssign::updateLinear(DataObj data, arma::vec Y, double sig2, arma::cube SigmaGM,
-                               arma::mat muGM, arma::mat gammaL, arma::cube pvec) {
+                               arma::mat muGM, arma::mat gammaL, arma::mat pvec) {
   // Update logic for linear model
   double VarAcc;
   arma::vec V(data.nC);
@@ -45,11 +45,13 @@ void ParamAssign::updateLinear(DataObj data, arma::vec Y, double sig2, arma::cub
   arma::mat predC(data.n, data.nC);
   arma::vec cluster_count_loc(data.nC);
 
-  arma::mat pCat(data.n, data.nC);
+  arma::mat pCat = arma::zeros(data.n, data.nC);
   if (data.UCatBool){
-    pCat = prod(pvec,2);
+    for (int cat = 0; cat < data.nCat; cat++) {
+      arma::uvec idxCat = arma::find(data.catInd == cat);
+      pCat %= data.UCat.cols(idxCat) * pvec.rows(idxCat);
+    }
   }
-
 
   for(int c = 0; c < data.nC; c++) {
     lp0(c) = log(p0(c)) ;
@@ -64,7 +66,7 @@ void ParamAssign::updateLinear(DataObj data, arma::vec Y, double sig2, arma::cub
     double nconst = 0;
     for(int c = 0; c < data.nC; c++) {
       if (data.UContBool){
-        logprob(c) += -arma::as_scalar((data.U.row(o) - muGM.col(c).t()) * SigmaGMinvC.slice(c) * (data.U.row(o).t() - muGM.col(c))) / 2.0;
+        logprob(c) += -arma::as_scalar((data.UCont.row(o) - muGM.col(c).t()) * SigmaGMinvC.slice(c) * (data.UCont.row(o).t() - muGM.col(c))) / 2.0;
       }
       logprob(c) += -pow(predC(o, c), 2) / sig2 / 2.0;
       logprob(c) = exp(logprob(c));
@@ -93,7 +95,7 @@ void ParamAssign::updateLinear(DataObj data, arma::vec Y, double sig2, arma::cub
 }
 
 void ParamAssign::updateProbit(DataObj data, arma::vec YFE, arma::vec YRE, arma::cube SigmaGM,
-                               arma::mat muGM, arma::mat gammaL, arma::cube pvec) {
+                               arma::mat muGM, arma::mat gammaL, arma::mat pvec) {
   // Probit update logic
   // Update logic for linear model
   double VarAcc;
@@ -114,11 +116,13 @@ void ParamAssign::updateProbit(DataObj data, arma::vec YFE, arma::vec YRE, arma:
   arma::vec cluster_count_loc(data.nC);
 
 
-  arma::mat pCat(data.n, data.nC);
+  arma::mat pCat = arma::zeros(data.n, data.nC);
   if (data.UCatBool){
-    pCat = prod(pvec,2);
+    for (int cat = 0; cat < data.nCat; cat++) {
+      arma::uvec idxCat = arma::find(data.catInd == cat);
+      pCat %= data.UCat.cols(idxCat) * pvec.rows(idxCat);
+    }
   }
-
   for(int c = 0; c < data.nC; c++) {
     lp0(c) = log(p0(c)) ;
     predC.col(c) = arma::normcdf(YFE + YRE + data.XL * gammaL.col(c),0,1);//prob that Y=1
@@ -135,7 +139,7 @@ void ParamAssign::updateProbit(DataObj data, arma::vec YFE, arma::vec YRE, arma:
     double nconst = 0;
     for(int c = 0; c < data.nC; c++) {
       if (data.UContBool){
-        logprob(c) += -arma::as_scalar((data.U.row(o) - muGM.col(c).t()) * SigmaGMinvC.slice(c) * (data.U.row(o).t() - muGM.col(c))) / 2.0;
+        logprob(c) += -arma::as_scalar((data.UCont.row(o) - muGM.col(c).t()) * SigmaGMinvC.slice(c) * (data.UCont.row(o).t() - muGM.col(c))) / 2.0;
       }
       logprob(c) = exp(logprob(c));
       logprob(c) = logprob(c)*predC(o,c)*pCat(o,c);

@@ -37,14 +37,12 @@ prior_init = function(params, nC){
   prior$assign = {}
   prior$assign$Cont = {}
   prior$assign$Cont$lambda = 1
-  prior$assign$Cont$mu = rep(0,max(params$qU,1))
-  prior$assign$Cont$nu = max(params$qU,1)+1
-  prior$assign$Cont$Psi = (max(params$qU,1)+prior$assign$nu+1)*diag(max(params$qU,1))
+  prior$assign$Cont$mu = rep(0,max(params$qUCont,1))
+  prior$assign$Cont$nu = max(params$qUCont,1)+1
+  prior$assign$Cont$Psi = (max(params$qUCont,1)+prior$assign$Cont$nu+1)*diag(max(params$qUCont,1))
   prior$assign$Cat = {}
-  prior$assign$alpha = c()
-  for (cat in params$qUCat){
-    prior$assign$alpha = rep(1,cat)
-  }
+  prior$assign$Cat$alpha = rep(1,min(params$qUCat,1))
+
 
   prior$Lat = {}
   prior$Lat$eta = params$qLat+4

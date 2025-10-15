@@ -6,8 +6,8 @@
 #' \item  RE random effect covariates names/index in dataframe
 #' \item  Lat latent effect covariates names/index in dataframe
 #' \item  Assign assignement variables list with fields:\itemize{
-#' \item  Cont Continuous variables names/index in dataframe
-#' \item  Cat Categorical variables names/index in dataframe
+#'        \item  Cont Continuous variables names/index in dataframe
+#'        \item  Cat Categorical variables names/index in dataframe
 #' }
 #' \item  REunit statistical unit of the RE colomn name/index
 #' \item  Y outcome (Continuous)}
@@ -97,27 +97,30 @@ profileGLMM_preprocess <- function(regtype, covList, dataframe, nC, intercept = 
       stop('ERROR: no cluster effect provided')
     }
   U_Empty = TRUE
+  d$UCat = data.frame()
   if(length(covList$Assign$Cat)!=0){
     d$names$UCat = covList$Assign$Cat
     U_Empty = FALSE
-    d$UCat = {}
-    params$qUCat = c()
+    params$catInd = c()
+    tracker = 1
     for(cat in covList$Assign$Cat){
-      d$UCat$cat = encodeCat(as,factor(dataframe[,cat, drop = FALSE]))
-      d$UCat$cat = cbind(1-rowSums(d$UCat$cat,dims = 2),d$UCat$cat)
-    params$qUCat = c(params$qUCat,dim(d$UCat$cat)[2])
+      tmp = encodeCat(as,factor(dataframe[,cat, drop = FALSE]))
+      d$UCat[,0:(dim(tmp)[2])+tracker] = cbind(1-rowSums(tmp,dims = 2),tmp)
+      params$catInd = c(params$catInd,rep(cat,dim(d$UCat$cat)[2]))
+      tracker = tracker + dim(d$UCat$cat)[2]
     }
   } else{
-    params$qUCat = c()
+    params$catInd = c(-1)
   }
   if(length(covList$Assign$Cont)!=0){
     d$UCont = dataframe[,covList$Assign$Cont, drop = FALSE]
     d$names$UCont = colnames(d$UCont)
+    d$UCont = as.matrix(d$UCont)
     U_Empty = FALSE
   }
   if(U_Empty){
     stop('ERROR: no clustering variables provided')}
-
+  d$UCat = as.matrix(d$UCat)
 
   if (length(covList$REunit)!=0){
     d$ZRE = as.numeric(factor(dataframe[,covList$REunit]))-1
@@ -136,8 +139,8 @@ profileGLMM_preprocess <- function(regtype, covList, dataframe, nC, intercept = 
     params$qUCont = dim(d$UCont)[2]} else{
       params$qUCont = 0
     }
-  if(!is.null(dim(d$UCat)[2])){
-    params$qUCat = dim(d$UCat)[2]} else{
+  if(dim(d$UCat)[2]!=0){
+    params$qUCat = length(unique(params$catInd))} else{
       params$qUCat = 0
     }
   params$qLat = dim(d$XLat)[2]

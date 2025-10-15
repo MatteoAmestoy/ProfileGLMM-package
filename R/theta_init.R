@@ -35,7 +35,7 @@ theta_init = function(prior,params,nC){
   if(params$qUCont>0){
     theta$ClusCont$Sigma = array(0, dim = c(params$qUCont,params$qUCont,nC))
     for (c in 1:nC){
-      theta$ClusCont$Sigma[,,c] = rinvwishart(prior$assign$nu,prior$assign$Cont$Psi)
+      theta$ClusCont$Sigma[,,c] = rinvwishart(prior$assign$Cont$nu,prior$assign$Cont$Psi)
     }
     theta$ClusCont$mu = matrix(0,nrow = params$qUCont,ncol = nC)
     for (c in 1:nC){
@@ -45,12 +45,13 @@ theta_init = function(prior,params,nC){
     theta$ClusCont$mu = matrix(0,nrow = 1,ncol = nC)
   }
 
-  theta$ClusCat = {}
+  theta$ClusCat$pvecClus = matrix(0,nrow = length(params$catInd),ncol=nC)
   if(params$qUCat>0){
-    ncat = 1
+    tracker = 0
     for (cat in params$qUCat){
-      theta$ClusCat[ncat]= rdirichlet(nC, prior$assign$alpha)
-      ncat = ncat + 1
+      n_ = sum(params$catInd==cat)
+      theta$ClusCat$pvecClus[(1:n_)+tracker,]= rdirichlet(nC, rep(prior$assign$alpha(cat),n_))
+      tracker = tracker + n_
     }
 
   }
