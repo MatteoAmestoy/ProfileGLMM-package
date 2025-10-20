@@ -97,18 +97,26 @@ profileGLMM_preprocess <- function(regtype, covList, dataframe, nC, intercept = 
       stop('ERROR: no cluster effect provided')
     }
   U_Empty = TRUE
-  d$UCat = data.frame()
+  d$UCat = NULL
   if(length(covList$Assign$Cat)!=0){
     d$names$UCat = covList$Assign$Cat
     U_Empty = FALSE
     params$catInd = c()
     tracker = 1
+    catCount = 1
     for(cat in covList$Assign$Cat){
-      tmp = encodeCat(as,factor(dataframe[,cat, drop = FALSE]))
-      d$UCat[,0:(dim(tmp)[2])+tracker] = cbind(1-rowSums(tmp,dims = 2),tmp)
-      params$catInd = c(params$catInd,rep(cat,dim(d$UCat$cat)[2]))
-      tracker = tracker + dim(d$UCat$cat)[2]
+      tmp = encodeCat(dataframe[,cat, drop = FALSE])
+      if(catCount == 1){
+      d$UCat = as.data.frame(cbind(1-rowSums(tmp,dims = 1),tmp))
+      }else{
+        d$UCat[,0:(dim(tmp)[2])+tracker] = cbind(1-rowSums(tmp,dims = 1),tmp)
+      }
+      colnames(d$UCat) = c(paste0(cat,".1"),colnames(tmp))
+      params$catInd = c(params$catInd,rep(catCount-1,dim(tmp)[2]+1))
+      tracker = tracker + dim(tmp)[2]+1
+      catCount= catCount + 1
     }
+    d$UCat = as.matrix(d$UCat)
   } else{
     params$catInd = c(-1)
   }
@@ -120,7 +128,7 @@ profileGLMM_preprocess <- function(regtype, covList, dataframe, nC, intercept = 
   }
   if(U_Empty){
     stop('ERROR: no clustering variables provided')}
-  d$UCat = as.matrix(d$UCat)
+
 
   if (length(covList$REunit)!=0){
     d$ZRE = as.numeric(factor(dataframe[,covList$REunit]))-1
@@ -139,17 +147,14 @@ profileGLMM_preprocess <- function(regtype, covList, dataframe, nC, intercept = 
     params$qUCont = dim(d$UCont)[2]} else{
       params$qUCont = 0
     }
-  if(dim(d$UCat)[2]!=0){
+  if(!is.null(dim(d$UCat)[2])){
     params$qUCat = length(unique(params$catInd))} else{
       params$qUCat = 0
     }
   params$qLat = dim(d$XLat)[2]
   params$nC = nC
-
   prior = prior_init(params, nC)
-
   theta = theta_init(prior,params,nC)
-
   return(list(d = d,
               params = params,
               prior = prior,

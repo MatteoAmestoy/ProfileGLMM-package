@@ -22,7 +22,6 @@ ParamAssign::ParamAssign(arma::ivec Z_, arma::vec p0_, double scale_, double sha
     }
   }
   non_0_clust = non_0_clust_loc;
-  adjMat = arma::sp_umat(n, n);
 }
 
 void ParamAssign::updateLinear(DataObj data, arma::vec Y, double sig2, arma::cube SigmaGM,
@@ -40,18 +39,21 @@ void ParamAssign::updateLinear(DataObj data, arma::vec Y, double sig2, arma::cub
     p0(c) = V(c) * VarAcc;
     VarAcc = VarAcc * (1 - V(c));
   }
+
   arma::vec lp0(data.nC);
   arma::cube SigmaGMinvC(data.qUCont, data.qUCont, data.nC);
   arma::mat predC(data.n, data.nC);
   arma::vec cluster_count_loc(data.nC);
 
-  arma::mat pCat = arma::zeros(data.n, data.nC);
+  arma::mat pCat = arma::ones(data.n, data.nC);
   if (data.UCatBool){
+
     for (int cat = 0; cat < data.nCat; cat++) {
       arma::uvec idxCat = arma::find(data.catInd == cat);
       pCat %= data.UCat.cols(idxCat) * pvec.rows(idxCat);
     }
   }
+
 
   for(int c = 0; c < data.nC; c++) {
     lp0(c) = log(p0(c)) ;
@@ -60,6 +62,7 @@ void ParamAssign::updateLinear(DataObj data, arma::vec Y, double sig2, arma::cub
       lp0(c)  += - arma::log_det_sympd(SigmaGM.slice(c)) / 2;
       SigmaGMinvC.slice(c) = arma::inv(SigmaGM.slice(c));}
   }
+
   arma::vec logprob(data.nC);
   for(int o = 0; o < data.n; o++) {
     logprob = lp0;
@@ -69,8 +72,8 @@ void ParamAssign::updateLinear(DataObj data, arma::vec Y, double sig2, arma::cub
         logprob(c) += -arma::as_scalar((data.UCont.row(o) - muGM.col(c).t()) * SigmaGMinvC.slice(c) * (data.UCont.row(o).t() - muGM.col(c))) / 2.0;
       }
       logprob(c) += -pow(predC(o, c), 2) / sig2 / 2.0;
-      logprob(c) = exp(logprob(c));
-      nconst += logprob(c)*pCat(o,c);
+      logprob(c) = exp(logprob(c))*pCat(o,c);
+      nconst += logprob(c);
     }
     double u = runif(1, 0, 1)(0) * nconst;
     for(int c = 0; c < data.nC; c++) {
@@ -116,13 +119,15 @@ void ParamAssign::updateProbit(DataObj data, arma::vec YFE, arma::vec YRE, arma:
   arma::vec cluster_count_loc(data.nC);
 
 
-  arma::mat pCat = arma::zeros(data.n, data.nC);
+  arma::mat pCat = arma::ones(data.n, data.nC);
   if (data.UCatBool){
     for (int cat = 0; cat < data.nCat; cat++) {
       arma::uvec idxCat = arma::find(data.catInd == cat);
       pCat %= data.UCat.cols(idxCat) * pvec.rows(idxCat);
     }
   }
+
+
   for(int c = 0; c < data.nC; c++) {
     lp0(c) = log(p0(c)) ;
     predC.col(c) = arma::normcdf(YFE + YRE + data.XL * gammaL.col(c),0,1);//prob that Y=1

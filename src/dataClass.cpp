@@ -9,6 +9,7 @@ DataObj::DataObj(arma::vec Y_, arma::mat XFE_, arma::mat XRE_, arma::mat XL_, ar
   XFE = XFE_;
   catInd = catInd_;
   nCat = catInd_.max()+1;
+  nUCat = arma::zeros(nCat);
   UCatBool  = false;
   if (nCat>0){
     UCatBool= true;

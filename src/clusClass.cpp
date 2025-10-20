@@ -22,7 +22,9 @@ void ParamClus::update(DataObj data, arma::ivec Z) {
   vUc.fill(0);
 
 
+
   if (data.UContBool){
+
     for(int i = 0; i < data.n; i++) {
       EUc.col(Z(i)) += data.UCont.row(i).t();
       nCvec(Z(i)) += 1.0;
@@ -46,13 +48,14 @@ void ParamClus::update(DataObj data, arma::ivec Z) {
       mu.col(c) = mvrnormArma(1, mun, (Sigma.slice(c) + Sigma.slice(c).t()) / 2.0 / lambdan).t();
     }
   }
+
   if (data.UCatBool){
 
     //Build the current count per cluster
     arma::mat p(data.UCat.n_cols,data.nC);
     for(int c = 0; c < data.nC; c++) {
       arma::uvec  idx = arma::find(Z == c);
-      p.col(c) = sum(data.UCat.rows(idx),0);
+      p.col(c) = sum(data.UCat.rows(idx),0).t();
     }
 
 

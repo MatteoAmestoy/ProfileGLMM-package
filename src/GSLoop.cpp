@@ -48,7 +48,6 @@ List GSLoopCPP(
     double scale,
     double shape,
     int regType) {
-
   // Data object
   DataObj data(Y, XFE, XRE, XL, UCont, UCat, catInd, ZRE, qRE, qUCont, nC);
 
@@ -75,6 +74,7 @@ List GSLoopCPP(
   arma::vec Storesig2(nStore);
   arma::vec Storealpha(nStore);
   arma::cube StoreGamma(data.qL, nC, nStore);
+  arma::cube Storepvec(thetaClus.pVec.n_rows, thetaClus.pVec.n_cols, nStore);
   arma::field<arma::cube> StorePhiClus(nStore);
   int storeIdx = 0;
 
@@ -102,6 +102,7 @@ List GSLoopCPP(
         StoreGamma.slice(storeIdx) = thetaLMM.gamma;
         Storesig2(storeIdx) = thetaLMM.sig2;
         Storealpha(storeIdx) = thetaAssign.alpha;
+        Storepvec.slice(storeIdx) = thetaClus.pVec;
         storeIdx += 1;
       }
     }
@@ -129,6 +130,7 @@ List GSLoopCPP(
         StoreGamma.slice(storeIdx) = thetaLMM.gamma;
         Storesig2(storeIdx) = thetaLMM.sig2;
         Storealpha(storeIdx) = thetaAssign.alpha;
+        Storepvec.slice(storeIdx) = thetaClus.pVec;
         storeIdx += 1;
       }
     }
@@ -142,6 +144,7 @@ List GSLoopCPP(
                             _["beta"] = StoreBeta,
                             _["sig2"] = Storesig2,
                             _["alpha"] = Storealpha,
+                            _["pvec"] = Storepvec,
                             _["gamma"] = StoreGamma);
 
   return Store;

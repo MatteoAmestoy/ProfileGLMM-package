@@ -48,9 +48,9 @@ theta_init = function(prior,params,nC){
   theta$ClusCat$pvecClus = matrix(0,nrow = length(params$catInd),ncol=nC)
   if(params$qUCat>0){
     tracker = 0
-    for (cat in params$qUCat){
-      n_ = sum(params$catInd==cat)
-      theta$ClusCat$pvecClus[(1:n_)+tracker,]= rdirichlet(nC, rep(prior$assign$alpha(cat),n_))
+    for (cat in 1:params$qUCat){
+      n_ = sum(params$catInd==(cat-1))
+      theta$ClusCat$pvecClus[(1:n_)+tracker,]= rdirichlet(nC, rep(prior$assign$Cat$alpha[cat],n_))
       tracker = tracker + n_
     }
 
