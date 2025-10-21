@@ -5,3 +5,11 @@ GSLoopCPP <- function(nIt, nBurnIn, nC, qRE, qUCont, Y, XFE, XRE, XL, UCont, UCa
     .Call(`_ProfileGLMM_GSLoopCPP`, nIt, nBurnIn, nC, qRE, qUCont, Y, XFE, XRE, XL, UCont, UCat, catInd, ZRE, beta, sig2, WRE, muClus, SigmaClus, pvecClus, WLat, gammaLat, a, b, lambdaFE, PhiRE, etaRE, lam0, mu0, nu0, Psi0, alpha0, PhiLat, etaLat, scale, shape, regType)
 }
 
+create_co_occurrence_matrix_cpp <- function(clustering_labels_matrix) {
+    .Call(`_ProfileGLMM_create_co_occurrence_matrix_cpp`, clustering_labels_matrix)
+}
+
+find_ls_optimal_partition <- function(co_occurrence_matrix, clustering_labels_matrix) {
+    .Call(`_ProfileGLMM_find_ls_optimal_partition`, co_occurrence_matrix, clustering_labels_matrix)
+}
+

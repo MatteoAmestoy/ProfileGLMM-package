@@ -57,9 +57,34 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// create_co_occurrence_matrix_cpp
+Rcpp::IntegerMatrix create_co_occurrence_matrix_cpp(Rcpp::IntegerMatrix clustering_labels_matrix);
+RcppExport SEXP _ProfileGLMM_create_co_occurrence_matrix_cpp(SEXP clustering_labels_matrixSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::IntegerMatrix >::type clustering_labels_matrix(clustering_labels_matrixSEXP);
+    rcpp_result_gen = Rcpp::wrap(create_co_occurrence_matrix_cpp(clustering_labels_matrix));
+    return rcpp_result_gen;
+END_RCPP
+}
+// find_ls_optimal_partition
+Int32 find_ls_optimal_partition(Rcpp::IntegerMatrix co_occurrence_matrix, Rcpp::IntegerMatrix clustering_labels_matrix);
+RcppExport SEXP _ProfileGLMM_find_ls_optimal_partition(SEXP co_occurrence_matrixSEXP, SEXP clustering_labels_matrixSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::IntegerMatrix >::type co_occurrence_matrix(co_occurrence_matrixSEXP);
+    Rcpp::traits::input_parameter< Rcpp::IntegerMatrix >::type clustering_labels_matrix(clustering_labels_matrixSEXP);
+    rcpp_result_gen = Rcpp::wrap(find_ls_optimal_partition(co_occurrence_matrix, clustering_labels_matrix));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_ProfileGLMM_GSLoopCPP", (DL_FUNC) &_ProfileGLMM_GSLoopCPP, 36},
+    {"_ProfileGLMM_create_co_occurrence_matrix_cpp", (DL_FUNC) &_ProfileGLMM_create_co_occurrence_matrix_cpp, 1},
+    {"_ProfileGLMM_find_ls_optimal_partition", (DL_FUNC) &_ProfileGLMM_find_ls_optimal_partition, 2},
     {NULL, NULL, 0}
 };
 

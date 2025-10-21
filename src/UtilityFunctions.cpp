@@ -41,3 +41,5 @@ arma::mat mvrnormArma(int n, arma::vec mu, arma::mat sigma) {
   }
   return arma::repmat(mu, 1, n).t() + Y * R;
 }
+
+
