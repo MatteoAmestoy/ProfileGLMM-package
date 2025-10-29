@@ -5,7 +5,7 @@
 #' @export
 #'
 #' @examples
-postProcess = function(MCMCObj,modeClus='LS'){
+profileGLMM_postProcess = function(MCMCObj,modeClus='NG'){
 
   nSim = dim(MCMCObj$Z)[2]
   nUCat = dim(MCMCObj$pvec)[1]
@@ -17,7 +17,6 @@ postProcess = function(MCMCObj,modeClus='LS'){
   if (modeClus=='LS'){
     idx = find_ls_optimal_partition(cooc,
                                     MCMCObj$Z)
-    print(idx)
     Zstar = MCMCObj$Z[,idx]
     Kstar = length(unique(Zstar))
     mode = 'LS'
@@ -63,6 +62,7 @@ postProcess = function(MCMCObj,modeClus='LS'){
     cenStar = centroids,
     pvecStar = pvecPost,
     gammaStar = gamma,
+    coVar = coVar,
     cen = cen,
     gamma = gam,
     pvec = pvec

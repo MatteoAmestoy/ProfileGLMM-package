@@ -10,8 +10,8 @@
 #' @export
 #'
 #' @examples
-theta_init = function(prior,params,nC){
-
+theta_init = function(prior,params){
+  nC = params$nC
   theta = {}
   theta$sig2 = rgamma(1,1,1)#rgamma(1,prior$FE$a,prior$FE$b)
 
