@@ -50,6 +50,6 @@ profileGLMM_Gibbs = function(model,nIt,nBurnIn){
                         model$prior$DP$scale,
                         model$prior$DP$shape,
                         model$regType)
-
+  gibbs_out$names = model$d$names
   return(gibbs_out)
 }
