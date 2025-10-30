@@ -1,10 +1,35 @@
-#' Prediction of cluster memberships and post_Objcomes
+#' @title Prediction of cluster memberships and outcomes
 #'
-#' @param MCMC_Obj Profile GLMM  MCMC post_Objput of  profileGLMM_Gibbs function
-#' @returns The Gibbs-sampled posterior. post_Objput of the cpp GSLoopCPP function.
+#' @description This function uses the results of the post-processed Profile GLMM MCMC chain to predict cluster memberships and outcomes for new or existing data. It first calculates the fixed effect (FE) contribution and then, if a representative clustering is available in \code{post_Obj}, computes the predicted cluster membership and the corresponding latent effect (Lat) contribution to the outcome.
+#'
+#' @param post_Obj The post-processed output from the \code{profileGLMM_postProcess} function. Must contain \code{pop} for population constant parameters and optionally \code{clust} for cluster-specific parameters.
+#' @param XFE A numeric matrix of fixed effects covariates for the prediction data.
+#' @param XLat A numeric matrix of latent effect covariates. This matrix is used for the interaction term with the predicted cluster membership.
+#' @param UCont A numeric matrix or vector of continuous profile variables (used for predicting cluster membership). Set to \code{NULL} if no continuous variables were used in the model.
+#' @param UCat A numeric matrix or vector of categorical profile variables (used for predicting cluster membership). Set to \code{NULL} if no categorical variables were used in the model.
+#' @returns A list with the following elements:
+#' \itemize{
+#'   \item{\code{FE}:}{ A numeric vector of the predicted fixed effects contribution to the outcome.}
+#'   \item{\code{Y}:}{ A numeric vector of the total predicted outcome ($\text{FE} + \text{Lat}$).}
+#'   \item{\code{classPred}:}{ A factor vector of the predicted cluster membership for each observation. \code{NULL} if no representative clustering was provided in \code{post_Obj}.}
+#'   \item{\code{Lat}:}{ A numeric vector of the predicted latent effect contribution to the outcome. \code{NULL} if no representative clustering was provided.}
+#' }
 #' @export
+#' @importFrom mvtnorm dmvnorm
+#' @importFrom stats dnorm
+#' @importFrom Matrix KhatriRao
 #'
 #' @examples
+#' \dontrun{
+#' # post_obj <- profileGLMM_postProcess(MCMC_output)
+#' # new_data_preds <- profileGLMM_predict(
+#' #   post_Obj = post_obj,
+#' #   XFE = new_XFE,
+#' #   XLat = new_XLat,
+#' #   UCont = new_UCont,
+#' #   UCat = new_UCat
+#' # )
+#' }
 profileGLMM_predict = function(post_Obj, XFE, XLat, UCont, UCat){
   pred= {}
   n = dim(XFE)[1]
@@ -33,7 +58,7 @@ profileGLMM_predict = function(post_Obj, XFE, XLat, UCont, UCat){
     }
 
     pred$classPred = as.factor(apply(matClassPred,1,which.max))
-    pred$Lat = t(KhatriRao(t(t(as(factor(pred$classPred),Class = "sparseMatrix"))),t(XLat),make.dimnames = TRUE))%*%gamVec
+    pred$Lat = t(KhatriRao(as(factor(pred$classPred),Class = "sparseMatrix"),t(XLat),make.dimnames = TRUE))%*%gamVec
     pred$Y = pred$Y + pred$Lat
   }else{
     print('No representative clustering provided')

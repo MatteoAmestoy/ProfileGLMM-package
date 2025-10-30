@@ -2,16 +2,28 @@
 % Please edit documentation in R/encodeCat.R
 \name{encodeCat}
 \alias{encodeCat}
-\title{Encodes factor variables dummies LAST is reference}
+\title{One-Hot Encodes Factor Variables (FIRST Level as Reference)}
 \usage{
 encodeCat(dataframe)
 }
 \arguments{
-\item{dataframe}{dataframe to convert}
+\item{dataframe}{A \code{data.frame} containing the data to be processed, which may include factor variables.}
 }
 \value{
-A dataframe with factor variable dummy encoded
+A \code{data.frame} where:
+\itemize{
+  \item{All original non-factor columns are present.}
+  \item{All original factor columns are replaced by a set of binary (0/1) dummy variables. The first level of the factor is excluded from the generated dummies, making the last level the reference.}
+}
 }
 \description{
-Encodes factor variables dummies LAST is reference
+This function takes a dataframe, identifies all columns of class \code{factor}, and converts them into **dummy variables** using one-hot encoding via \code{stats::model.matrix}. For each factor, the function explicitly removes the first dummy variable generated, effectively making the **first level** of the factor the **reference level** (omitted category). Non-factor columns are retained as is.
+}
+\examples{
+\dontrun{
+# Example usage (assuming 'mydata' is available):
+# mydata$Gender = as.factor(mydata$Gender)
+# encoded_data = encodeCat(mydata)
+
+}
 }

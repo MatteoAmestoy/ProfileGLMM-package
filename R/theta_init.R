@@ -1,15 +1,33 @@
-#' Initatilize the variables for the gibbs sampler.
+#' @title Initialize the variables for the Gibbs sampler chain
 #'
-#' @param prior A list of prior configuration to draw initialization from.
-#' Same structure as the output of prior_init.
-#' @param params A list of the problem parameters.
-#' Same structure as the output of process_Data_outcome.
-#' @param nC number of possible clusters
+#' @description This function generates initial values (\code{theta}) for all parameters in the Profile GLMM Gibbs sampler by drawing from the specified prior distributions. These initial values are crucial for starting the MCMC chain in \code{profileGLMM_Gibbs}. The initialization includes parameters for fixed effects, random effects variance, latent effects, and the profile cluster parameters (centroids, covariances, and categorical probability vectors).
 #'
-#' @returns A list containing the initalisation values of the Gibbs sampler
+#' @param prior A list containing the prior configuration to draw initialization from. This list should match the structure produced by the \code{prior_init} function, including hyperparameters for FE, RE, Latent, and cluster assignment priors.
+#' @param params A list containing the problem's dimensional parameters and indices (e.g., number of observations, number of covariates). This list should match the structure of the output from \code{process_Data_outcome}.
+#'
+#' @returns A list (\code{theta}) containing the sampled initialization values for the Gibbs sampler. Key elements include:
+#' \itemize{
+#'   \item{\code{sig2}:}{ Initial residual variance.}
+#'   \item{\code{betaFE}:}{ Initial fixed effects coefficients.}
+#'   \item{\code{SigRE}:}{ Initial random effects covariance matrix.}
+#'   \item{\code{SigLat}:}{ Initial latent effects covariance matrix.}
+#'   \item{\code{gammaLat}:}{ Initial latent effects coefficients, organized by cluster.}
+#'   \item{\code{ClusCont}:}{ List containing initial continuous cluster parameters (\code{mu} and \code{Sigma}).}
+#'   \item{\code{ClusCat}:}{ List containing initial categorical cluster parameters (\code{pvecClus}).}
+#' }
 #' @export
+#' @importFrom LaplacesDemon rinvwishart rmvn
+#' @importFrom stats rgamma rnorm
+#' @importFrom MCMCpack rdirichlet
 #'
 #' @examples
+#' \dontrun{
+#' # Assuming prior_config and problem_params are available
+#' # initial_theta <- theta_init(
+#' #   prior = prior_config,
+#' #   params = problem_params
+#' # )
+#' }
 theta_init = function(prior,params){
   nC = params$nC
   theta = {}

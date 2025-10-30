@@ -1,17 +1,26 @@
 Package: ProfileGLMM
 Type: Package
-Title: What the Package Does (Title Case)
+Title: Bayesian Profile Regression using Generalised Linear Mixed Models
 Version: 0.1.0
 Authors@R: c(
     person(
-      "Jane", "Doe",
-      email = "jane@example.com",
+      "Matteo", "Amestoy",
+      email = "m.amestoy@amsterdamumc.nl",
       role = c("aut", "cre")
+    ),
+    person(
+      "Mark", "van de Wiel",
+      email = "mark.vdwiel@amsterdamumc.nl",
+      role = c("ths")
+    ),
+    person(
+      "Wessel", "van Wieringen",
+      email = "w.vanwieringen@amsterdamumc.nl",
+      role = c("ths")
     )
   )
-Description: More about what it does (maybe more than one line).
-    Continuation lines should be indented.
-License: What license is it under?
+Description: This package implements a Bayesian profile regression using a generalized linear mixed model as output model. The package allows for binary (probit mixed model) and continuous (linear mixed model) outcomes and both continuous and categorical clustering variables. The package utilizes 'RcppArmadillo' and 'RcppDist' for high-performance statistical computing in C++.
+License: GPL-2
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.3.2

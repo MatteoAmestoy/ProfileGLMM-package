@@ -1,13 +1,29 @@
-#' R wrapper to call the cpp GSLoopCPP function.
+#' @title R Wrapper for Profile GLMM Gibbs Sampler (C++ backend)
 #'
-#' @param model Profile LMM  preprocessed by the process_Data_outcome function
-#' @param nIt Integer, total number of elements sampled by the gibbs sampler
-#' @param nBurnIn Integer, number of elements of the chain that are not saved as part of the burn-in.
+#' @description This is the main function for fitting the Profile Generalized Linear Mixed Model (Profile GLMM) using a blocked Gibbs sampling algorithm. It acts as an R wrapper, passing pre-processed data, initial values, and prior hyperparameters contained in the \code{model} object directly to the C++ implementation \code{GSLoopCPP}. The function simulates the posterior distribution of all model parameters, including fixed effects, random effects variance, profile cluster parameters, latent effects, and cluster assignments.
 #'
-#' @returns The Gibbs-sampled posterior. Output of the cpp GSLoopCPP function.
+#' @param model A list object containing all data, initial parameter values, model dimensions, prior hyperparameters, and model configuration (e.g., regression type). This object is typically the output of a data processing function like \code{process_Data_outcome}. Key components include:
+#' \itemize{
+#'   \item{\code{d}:}{ Data matrices (Y, XFE, XRE, XLat, UCont, UCat).}
+#'   \item{\code{params}:}{ Model dimension parameters (e.g., nC, qRE, qUCont).}
+#'   \item{\code{theta}:}{ Initial values for parameters ($\beta_{FE}, \sigma^2, \Sigma_{RE}, \text{cluster means}, \text{cluster covariance}, \text{cluster prob. vectors}, \Sigma_{Lat}, \gamma_{Lat}$).}
+#'   \item{\code{prior}:}{ Hyperparameters for all prior distributions (e.g., $N, \text{Inverse-Wishart}, \text{Dirichlet}$).}
+#'   \item{\code{regType}:}{ The type of regression being performed.}
+#' }
+#' @param nIt Integer, the total number of MCMC iterations *counting* the burn-in period. The sampler will run for \code{nIt - nBurnIn} iterations in total.
+#' @param nBurnIn Integer, the number of initial MCMC iterations that are discarded (not saved) to allow the chain to converge.
+#' @returns A list containing the saved Gibbs-sampled MCMC chains for all model parameters (e.g., \code{beta}, \code{Z}, \code{gamma}, \code{pvec}, \code{muClus}, \code{PhiClus}, etc.) and the variable names from the original data. This output is ready for post-processing with \code{profileGLMM_postProcess}.
 #' @export
 #'
 #' @examples
+#' \dontrun{
+#' # Assuming 'prepped_model' is the output of the data pre-processing step
+#' # mcmc_chain <- profileGLMM_Gibbs(
+#' #   model = prepped_model,
+#' #   nIt = 5000,
+#' #   nBurnIn = 1000
+#' # )
+#' }
 profileGLMM_Gibbs = function(model,nIt,nBurnIn){
 
 

@@ -17,7 +17,10 @@ profileGLMM_preprocess(
 \item  FE fixed effect covariates names/index in dataframe
 \item  RE random effect covariates names/index in dataframe
 \item  Lat latent effect covariates names/index in dataframe
-\item  Assign assignement variable categorical not supported yet
+\item  Assign assignement variables list with fields:\itemize{
+       \item  Cont Continuous variables names/index in dataframe
+       \item  Cat Categorical variables names/index in dataframe
+}
 \item  REunit statistical unit of the RE colomn name/index
 \item  Y outcome (Continuous)}}
 
@@ -34,12 +37,17 @@ profileGLMM_preprocess(
 }
 \value{
 A list with\itemize{
-\item  d dictionary with  [XFE,XRE,XLat,U,ZRE] design matrices
+\item  d dictionary with  [XFE,XRE,XLat,UCont,UCat,ZRE] design matrices
 \item  [[params]] list of the parameters of the data\itemize{
                  \item  n int nb of obs
                  \item  qFE lint, number of covariates of FE
                  \item  nRE int, number of stat units of RE
-                 \item  qRE int, number of covariates of RE}
+                 \item  qRE int, number of covariates of RE
+                 \item  qLat int, number of covariates interacting with the
+                                  latent clusters
+                 \item  qUCont int, number of continuous clustering covariates
+                 \item  qUCat int, number of categorical clustering covariates
+                 \item  nC int, maximal number of clusters}
 \item prior a list with all the specification of the default prior used
 \item theta a list with a default set of parameters to start the chain, drawn from the prior
 \item regType an int. Currently 0 for linear, 1 for probit}

@@ -153,7 +153,7 @@ profileGLMM_preprocess <- function(regtype, covList, dataframe, nC, intercept = 
     }
   params$qLat = dim(d$XLat)[2]
   params$nC = nC
-  prior = prior_init(params, nC)
+  prior = prior_init(params)
   theta = theta_init(prior,params)
   return(list(d = d,
               params = params,

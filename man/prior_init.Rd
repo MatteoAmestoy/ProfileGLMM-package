@@ -2,23 +2,36 @@
 % Please edit documentation in R/prior_init.R
 \name{prior_init}
 \alias{prior_init}
-\title{Initialise the priors of the model}
+\title{Initialize the prior hyperparameters for the Profile GLMM}
 \usage{
-prior_init(params, nC)
+prior_init(params)
 }
 \arguments{
-\item{params}{A list with Fields: \itemize{
-\item FE fixed effect covariates names/index in dataframe
-\item RE random effect covariates names/index in dataframe
-\item REunit statistical unit of the RE colomn name/index
-\item Lat latent effect covariates names/index in dataframe
-\item Assign assignement variable categorical not supported yet}}
-
-\item{nC}{An integer, the number of possible clusters}
+\item{params}{A list containing dimensional parameters of the model (often the output of \code{process_Data_outcome}). Important fields used for prior setup include:
+\itemize{
+  \item{\code{qFE}:}{ Number of fixed effects coefficients.}
+  \item{\code{qRE}:}{ Dimension of the random effects vector.}
+  \item{\code{qLat}:}{ Dimension of the latent effects vector.}
+  \item{\code{qUCont}:}{ Number of continuous profile variables.}
+  \item{\code{qUCat}:}{ Number of categorical profile variables.}
+}}
 }
 \value{
-A list of the priors parameters for each variable
+A list (\code{prior}) containing the hyperparameter values structured by the parameter block they govern:
+\itemize{
+  \item{\code{FE}:}{ Priors for fixed effects and residual variance (e.g., \code{lambda}, \code{a}, \code{b} for conjugate Normal-Gamma).}
+  \item{\code{RE}:}{ Inverse-Wishart priors for random effects covariance ($\Sigma_{RE}$) (e.g., \code{Phi}, \code{eta}).}
+  \item{\code{assign}:}{ Priors for the cluster assignment parameters, nested under \code{Cont} (Normal-Inverse-Wishart for continuous) and \code{Cat} (Dirichlet for categorical).}
+  \item{\code{Lat}:}{ Inverse-Wishart prior for the latent effects covariance ($\Sigma_{Lat}$) (e.g., \code{Phi}, \code{eta}).}
+  \item{\code{DP}:}{ Parameters for the Dirichlet Process prior (e.g., \code{scale}, \code{shape}).}
+}
 }
 \description{
-Initialise the priors of the model
+This function establishes the prior distributions for all parameters in the Profile GLMM. It sets up vague, non-informative priors (often using small precision/large variance or conjugate forms like Wishart/Dirichlet) for the fixed effects ($\beta_{FE}$), residual variance ($\sigma^2$), random effects covariance ($\Sigma_{RE}$), latent effects covariance ($\Sigma_{Lat}$), cluster parameters (means and covariances), and the Dirichlet Process parameters ($\alpha$).
+}
+\examples{
+\dontrun{
+# Assuming problem_params is available (e.g., qRE=2, qUCont=3, etc.)
+# prior_config <- prior_init(params = problem_params)
+}
 }
