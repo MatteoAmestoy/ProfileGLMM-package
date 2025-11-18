@@ -60,9 +60,6 @@ profileGLMM_predict = function(post_Obj, XFE, XLat, UCont, UCat){
     pred$classPred = as.factor(apply(matClassPred,1,which.max))
     aaa = KhatriRao(as(factor(pred$classPred),Class = "sparseMatrix"),t(XLat),make.dimnames = TRUE)
 
-    # print(aaa)
-    # bbb= t(aaa)
-    # ccc= bbb%*%gamVec
     pred$Int = t(KhatriRao(as(factor(pred$classPred),Class = "sparseMatrix"),t(XLat),make.dimnames = TRUE))%*%gamVec
     pred$Y = pred$Y + pred$Int
   }else{
