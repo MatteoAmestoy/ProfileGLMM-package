@@ -23,7 +23,7 @@ A list with the following elements:
   \item{\code{FE}:}{ A numeric vector of the predicted fixed effects contribution to the outcome.}
   \item{\code{Y}:}{ A numeric vector of the total predicted outcome ($\text{FE} + \text{Lat}$).}
   \item{\code{classPred}:}{ A factor vector of the predicted cluster membership for each observation. \code{NULL} if no representative clustering was provided in \code{post_Obj}.}
-  \item{\code{Lat}:}{ A numeric vector of the predicted latent effect contribution to the outcome. \code{NULL} if no representative clustering was provided.}
+  \item{\code{Int}:}{ A numeric vector of the predicted latent effect contribution to the outcome. \code{NULL} if no representative clustering was provided.}
 }
 }
 \description{

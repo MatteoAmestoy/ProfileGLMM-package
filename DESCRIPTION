@@ -32,3 +32,5 @@ Imports:
     Rcpp,
     RcppArmadillo,
     RcppDist
+Depends: 
+    R (>= 3.5)

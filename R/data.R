@@ -1,0 +1,82 @@
+#' @title Simulated Data and Parameters for a exposure profile linear mixed model
+#'
+#' @description
+#' A list containing a simulated exposure dataset (\code{df}) and the ground-truth parameters
+#' (\code{theta0}) used to generate it.).
+#'
+#' The dataset \code{df} contains $N = 4500$ observations across $n_{Ind} = 1500$
+#' individuals, with $n_R = 3$ repeated measures per individual.
+#'
+#' @format A list with 2 components:
+#' \describe{
+#'   \item{df}{A data frame with 4,500 rows and 6 variables (the simulated data).}
+#'   \item{theta0}{A list of 11 elements containing the true parameters used for simulation.}
+#' }
+#'
+#' @section \code{df} Data Variables:
+#' \describe{
+#'   \item{X}{Continuous predictor ($\sim N(0, 1)$).}
+#'   \item{t}{Time-like variable (structured around 0, 1, 2).}
+#'   \item{indiv}{**Individual ID** (1 to 1500), the grouping factor.}
+#'   \item{Exp1, Exp2}{Exposure continuous predictors.}
+#'   \item{Y}{The **Simulated Response Variable** calculated as: $\mathbf{Y} = y_{\text{Fe}} + y_{\text{Int}} + y_{\text{Re}} + \boldsymbol{\epsilon}$, where $\boldsymbol{\epsilon} \sim N(0, 1)$.}
+#' }
+#'
+#' @section \code{theta0} Parameters:
+#' The list \code{theta0} holds the true values used to generate \code{Y}, including:
+#' \itemize{
+#'   \item \code{Lat}{**Categorical Factor** (9 levels), defining the clusters for interaction effects.}
+#'   \item \code{beta}: True fixed effects for the global intercept and $\mathbf{X}$ (i.e., $(3, 2)$).
+#'   \item \code{alphaLat}: Vector of 18 coefficients defining the cluster-specific intercepts and slopes for $\mathbf{X}$ within the 9 \code{Lat} categories.
+#'   \item \code{alphaRE}: Vector of 1500 random slopes for the time variable $\mathbf{t}$, drawn from $N(0, 1)$.
+#'   \item \code{sigma}: Residual standard deviation (1).
+#' }
+#'
+#' @details
+#' The underlying model for the response $\mathbf{Y}$ is:
+#' $$\mathbf{Y} = \mathbf{X}_{\text{Fe}}\boldsymbol{\beta} + \mathbf{X}_{\text{Int}}\boldsymbol{\alpha}_{\text{Lat}} + \mathbf{X}_{\text{Re}}\boldsymbol{\alpha}_{\text{RE}} + \boldsymbol{\epsilon}$$
+#'
+#' @source Generated synthetically by the package authors.
+#' @keywords datasets
+"exposure_data"
+
+# --- Documentation for the piecewise dataset starts here ---
+
+#' @title Simulated Data and Parameters for a Piecewise Example
+#'
+#' @description
+#' A list containing a second simulated dataset (\code{df}) and its ground-truth
+#' parameters (\code{theta0}). This dataset is generated from a **piecewise linear
+#' model**, where the continuous predictor \code{x} is segmented into 6 bins, and
+#' different intercept and slope coefficients are applied to each segment.
+#'
+#' The dataset \code{df} contains $N = 3000$ observations.
+#'
+#' @format A list with 2 components:
+#' \describe{
+#'   \item{df}{A data frame with 3,000 rows and 2 variables (the simulated data).}
+#'   \item{theta0}{A list of 5 elements containing the true parameters used for simulation.}
+#' }
+#'
+#' @section \code{df} Data Variables:
+#' \describe{
+#'   \item{x}{A continuous predictor, uniformly distributed between -3 and 3.}
+#'   \item{Y}{The **Simulated Response Variable** defined by the piecewise linear model.}
+#' }
+#'
+#' @section \code{theta0} Parameters:
+#' The list \code{theta0} holds the true values used for simulation, including:
+#' \itemize{
+#'   \item \code{beta}: True global intercept (i.e., (0.5)).
+#'   \item \code{Lat}: The categorical factor (1 to 6) derived from segmenting \code{x}.
+#'   \item \code{alphaLat}: Vector of $2 \times 6 = 12$ coefficients defining the specific intercept and slope for \code{x} within each of the 6 segments.
+#' }
+#'
+#' @details
+#' The underlying model for the response $\mathbf{Y}$ is:
+#' $$\mathbf{Y} = \mathbf{X}_{\text{Fe}}\boldsymbol{\beta} + \mathbf{X}_{\text{Lat}}\boldsymbol{\alpha}_{\text{Lat}} + \boldsymbol{\epsilon}$$
+#' where $\mathbf{X}_{\text{Fe}}$ is the global intercept, and $\mathbf{X}_{\text{Lat}}\boldsymbol{\alpha}_{\text{Lat}}$ models the piecewise relationship of \code{x} across the 6 categories defined in \code{theta0$Lat}. The error term $\boldsymbol{\epsilon} \sim N(0, 1)$.
+#'
+#' @source Generated synthetically by the package authors.
+#' @keywords datasets
+"piecewise_data"

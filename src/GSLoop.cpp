@@ -143,7 +143,7 @@ List GSLoopCPP(
                             _["PhiClus"] = StorePhiClus,
                             _["beta"] = StoreBeta,
                             _["sig2"] = Storesig2,
-                            _["alpha"] = Storealpha,
+                            _["zeta"] = Storealpha,
                             _["pvec"] = Storepvec,
                             _["gamma"] = StoreGamma);
 

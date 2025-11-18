@@ -15,6 +15,7 @@
 #' @export
 #' @importFrom stats quantile
 #' @importFrom utils head
+#' @importFrom Spectrum estimate_k cluster_similarity
 #'
 #' @examples
 #' \dontrun{

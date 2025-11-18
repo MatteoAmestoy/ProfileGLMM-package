@@ -27,7 +27,7 @@ encodeCat = function(dataframe){
   factor_cols = colnames(dataframe)[typeCol == 'factor']
 
   for (col_name in factor_cols) {
-    print(col_name)
+    # print(col_name)
     formula_str = paste0("~ ", col_name, " - 1")
 
     dummy_matrix = stats::model.matrix(
@@ -36,10 +36,10 @@ encodeCat = function(dataframe){
     )
 
     dummy_df = as.data.frame(dummy_matrix[,2:length(colnames(dummy_matrix))])
-    print(colnames(dummy_df))
+    # print(colnames(dummy_df))
 
     new_names = gsub(paste0(col_name), paste0(col_name, "."), colnames(dummy_df))
-    print(new_names)
+    # print(new_names)
     colnames(dummy_df) = new_names
 
     out_df = cbind(out_df, dummy_df)

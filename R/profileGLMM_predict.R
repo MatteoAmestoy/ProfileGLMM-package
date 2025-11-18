@@ -12,12 +12,12 @@
 #'   \item{\code{FE}:}{ A numeric vector of the predicted fixed effects contribution to the outcome.}
 #'   \item{\code{Y}:}{ A numeric vector of the total predicted outcome ($\text{FE} + \text{Lat}$).}
 #'   \item{\code{classPred}:}{ A factor vector of the predicted cluster membership for each observation. \code{NULL} if no representative clustering was provided in \code{post_Obj}.}
-#'   \item{\code{Lat}:}{ A numeric vector of the predicted latent effect contribution to the outcome. \code{NULL} if no representative clustering was provided.}
+#'   \item{\code{Int}:}{ A numeric vector of the predicted latent effect contribution to the outcome. \code{NULL} if no representative clustering was provided.}
 #' }
 #' @export
 #' @importFrom mvtnorm dmvnorm
 #' @importFrom stats dnorm
-#' @importFrom Matrix KhatriRao
+#' @importFrom Matrix KhatriRao t
 #'
 #' @examples
 #' \dontrun{
@@ -31,7 +31,7 @@
 #' # )
 #' }
 profileGLMM_predict = function(post_Obj, XFE, XLat, UCont, UCat){
-  pred= {}
+  pred = {}
   n = dim(XFE)[1]
   pred$FE = as.matrix(XFE)%*%t(post_Obj$pop$betaFE['mean',])
   pred$Y = pred$FE
@@ -58,12 +58,17 @@ profileGLMM_predict = function(post_Obj, XFE, XLat, UCont, UCat){
     }
 
     pred$classPred = as.factor(apply(matClassPred,1,which.max))
-    pred$Lat = t(KhatriRao(as(factor(pred$classPred),Class = "sparseMatrix"),t(XLat),make.dimnames = TRUE))%*%gamVec
-    pred$Y = pred$Y + pred$Lat
+    aaa = KhatriRao(as(factor(pred$classPred),Class = "sparseMatrix"),t(XLat),make.dimnames = TRUE)
+
+    # print(aaa)
+    # bbb= t(aaa)
+    # ccc= bbb%*%gamVec
+    pred$Int = t(KhatriRao(as(factor(pred$classPred),Class = "sparseMatrix"),t(XLat),make.dimnames = TRUE))%*%gamVec
+    pred$Y = pred$Y + pred$Int
   }else{
     print('No representative clustering provided')
     pred$classPred = NULL
-    pred$Lat = NULL
+    pred$Int = NULL
   }
 
 
