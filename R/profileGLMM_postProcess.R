@@ -18,11 +18,10 @@
 #' @importFrom Spectrum estimate_k cluster_similarity
 #'
 #' @examples
-#' \dontrun{
 #' # Assuming MCMC_Obj is the result of profileGLMM_Gibbs()
 #' post_Obj = profileGLMM_postProcess(MCMC_Obj)
 #' print(post_Obj$pop$betaFE)
-#' }
+
 profileGLMM_postProcess = function(MCMC_Obj, modeClus='NG', comp_cooc = T, alpha = 0.05){
 
   nSim = dim(MCMC_Obj$Z)[2]

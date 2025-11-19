@@ -56,7 +56,6 @@ A list with\itemize{
 Preprocess the data from a list describing the profile LMM model
 }
 \examples{
-\dontrun{
 data("exposure_data")
 exp_data = exposure_data$df
 theta0= exposure_data$theta0
@@ -76,5 +75,4 @@ dataProfile = profileGLMM_preprocess(regtype='linear',
                                      dataframe = exp_data,
                                      nC = 30,
                                      intercept = list(FE = T, RE = F, Lat = T))
-}
 }

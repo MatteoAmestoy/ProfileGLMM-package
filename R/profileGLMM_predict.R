@@ -20,14 +20,13 @@
 #' @importFrom Matrix KhatriRao t
 #'
 #' @examples
-#' \dontrun{
 #' # Assuming post_Obj is the result of profileGLMM_postProcess()
 #' pred_Obj = profileGLMM_predict(post_Obj,
 #'                                dataProfile$d$XFE,
 #'                                dataProfile$d$XLat,
 #'                                dataProfile$d$UCont,
 #'                                dataProfile$d$UCat)
-#' }
+
 profileGLMM_predict = function(post_Obj, XFE, XLat, UCont, UCat){
   pred = {}
   n = dim(XFE)[1]
