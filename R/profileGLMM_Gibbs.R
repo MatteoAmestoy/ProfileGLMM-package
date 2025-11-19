@@ -3,7 +3,7 @@
 #' @description This is the main function for fitting the Profile Generalized Linear Mixed Model (Profile GLMM) using a blocked Gibbs sampling algorithm. It acts as an R wrapper, passing pre-processed data, initial values, and prior hyperparameters contained in the \code{model} object directly to the C++ implementation \code{GSLoopCPP}. The function simulates the posterior distribution of all model parameters, including fixed effects, random effects variance, profile cluster parameters, latent effects, and cluster assignments.
 #'
 #' @param model A list object containing all data, initial parameter values, model dimensions, prior hyperparameters, and model configuration (e.g., regression type). This object is typically the output of a data processing function like \code{process_Data_outcome}. Key components include:
-#' \itemize{
+#' \describe{
 #'   \item{\code{d}:}{ Data matrices (Y, XFE, XRE, XLat, UCont, UCat).}
 #'   \item{\code{params}:}{ Model dimension parameters (e.g., nC, qRE, qUCont).}
 #'   \item{\code{theta}:}{ Initial values for parameters (\eqn{\beta_{FE}}, \eqn{\sigma^2}, \eqn{\Sigma_{RE}}, cluster means, cluster covariance, cluster prob. vectors, \eqn{\Sigma_{Lat}}, \eqn{\gamma_{Lat}}).}

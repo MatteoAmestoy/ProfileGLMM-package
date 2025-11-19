@@ -21,7 +21,7 @@ exposure_data
 A list containing a simulated exposure dataset (\code{df}) and the ground-truth parameters
 (\code{theta0}) used to generate it.
 
-The dataset \code{df} contains $N = 4500$ observations across $n_{Ind} = 1500$
+The dataset \code{df} contains \eqn{N = 4500} observations across \eqn{n_{Ind} = 1500}
 individuals, with $n_R = 3$ repeated measures per individual.
 }
 \details{
@@ -43,7 +43,7 @@ The underlying model for the response \eqn{\bold{Y}} is:
 
 The list \code{theta0} holds the true values used to generate \code{Y}, including:
 \itemize{
-   \item \code{Lat}{**Categorical Factor** (9 levels), defining the clusters for interaction effects.}
+   \item \code{Lat}: **Categorical Factor** (9 levels), defining the clusters for interaction effects.
    \item \code{beta}: True fixed effects for the global intercept and \eqn{\bold{X}} (i.e., $(3, 2)$).
    \item \code{alphaLat}: Vector of 18 coefficients defining the cluster-specific intercepts and slopes for \eqn{\bold{X}} within the 9 \code{Lat} categories.
    \item \code{alphaRE}: Vector of 1500 random slopes for the time variable \eqn{\bold{t}}, drawn from $N(0, 1)$.

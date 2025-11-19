@@ -13,7 +13,7 @@ theta_init(prior, params)
 }
 \value{
 A list (\code{theta}) containing the sampled initialization values for the Gibbs sampler. Key elements include:
-\itemize{
+\describe{
   \item{\code{sig2}:}{ Initial residual variance.}
   \item{\code{betaFE}:}{ Initial fixed effects coefficients.}
   \item{\code{SigRE}:}{ Initial random effects covariance matrix.}

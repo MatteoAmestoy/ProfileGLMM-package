@@ -17,7 +17,7 @@ profileGLMM_postProcess(MCMC_Obj, modeClus = "NG", comp_cooc = T, alpha = 0.05)
 }
 \value{
 A list with three elements:
-\itemize{
+\describe{
   \item{\code{coocMat}:}{ The co-occurrence matrix of the MCMC cluster assignments (\code{MCMC_Obj$Z}).}
   \item{\code{clust}:}{ A list containing the results of the representative clustering (if \code{comp_cooc = TRUE}), including the optimal partition (\code{Zstar}), number of clusters (\code{Kstar}), representative cluster parameters (\code{cen}, \code{pvec}, \code{gamma}), and full posterior samples for the cluster characteristics.}
   \item{\code{pop}:}{ A list containing the posterior mean and \code{(1-alpha)} credible intervals for the fixed effects (\code{betaFE}).}

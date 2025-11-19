@@ -8,7 +8,7 @@ profileGLMM_Gibbs(model, nIt, nBurnIn)
 }
 \arguments{
 \item{model}{A list object containing all data, initial parameter values, model dimensions, prior hyperparameters, and model configuration (e.g., regression type). This object is typically the output of a data processing function like \code{process_Data_outcome}. Key components include:
-\itemize{
+\describe{
   \item{\code{d}:}{ Data matrices (Y, XFE, XRE, XLat, UCont, UCat).}
   \item{\code{params}:}{ Model dimension parameters (e.g., nC, qRE, qUCont).}
   \item{\code{theta}:}{ Initial values for parameters (\eqn{\beta_{FE}}, \eqn{\sigma^2}, \eqn{\Sigma_{RE}}, cluster means, cluster covariance, cluster prob. vectors, \eqn{\Sigma_{Lat}}, \eqn{\gamma_{Lat}}).}

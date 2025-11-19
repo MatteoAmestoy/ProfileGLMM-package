@@ -19,7 +19,7 @@ profileGLMM_predict(post_Obj, XFE, XLat, UCont, UCat)
 }
 \value{
 A list with the following elements:
-\itemize{
+\describe{
   \item{\code{FE}:}{ A numeric vector of the predicted fixed effects contribution to the outcome.}
   \item{\code{Y}:}{ A numeric vector of the total predicted outcome (FE + Lat).}
   \item{\code{classPred}:}{ A factor vector of the predicted cluster membership for each observation. \code{NULL} if no representative clustering was provided in \code{post_Obj}.}

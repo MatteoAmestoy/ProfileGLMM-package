@@ -8,7 +8,7 @@
 #' @param UCont A numeric matrix or vector of continuous profile variables (used for predicting cluster membership). Set to \code{NULL} if no continuous variables were used in the model.
 #' @param UCat A numeric matrix or vector of categorical profile variables (used for predicting cluster membership). Set to \code{NULL} if no categorical variables were used in the model.
 #' @returns A list with the following elements:
-#' \itemize{
+#' \describe{
 #'   \item{\code{FE}:}{ A numeric vector of the predicted fixed effects contribution to the outcome.}
 #'   \item{\code{Y}:}{ A numeric vector of the total predicted outcome (FE + Lat).}
 #'   \item{\code{classPred}:}{ A factor vector of the predicted cluster membership for each observation. \code{NULL} if no representative clustering was provided in \code{post_Obj}.}

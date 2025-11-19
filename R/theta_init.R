@@ -6,7 +6,7 @@
 #' @param params A list containing the problem's dimensional parameters and indices (e.g., number of observations, number of covariates). This list should match the structure of the output from \code{process_Data_outcome}.
 #'
 #' @returns A list (\code{theta}) containing the sampled initialization values for the Gibbs sampler. Key elements include:
-#' \itemize{
+#' \describe{
 #'   \item{\code{sig2}:}{ Initial residual variance.}
 #'   \item{\code{betaFE}:}{ Initial fixed effects coefficients.}
 #'   \item{\code{SigRE}:}{ Initial random effects covariance matrix.}

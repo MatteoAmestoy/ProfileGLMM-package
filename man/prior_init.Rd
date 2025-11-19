@@ -8,7 +8,7 @@ prior_init(params)
 }
 \arguments{
 \item{params}{A list containing dimensional parameters of the model (often the output of \code{process_Data_outcome}). Important fields used for prior setup include:
-\itemize{
+\describe{
   \item{\code{qFE}:}{ Number of fixed effects coefficients.}
   \item{\code{qRE}:}{ Dimension of the random effects vector.}
   \item{\code{qLat}:}{ Dimension of the latent effects vector.}
@@ -18,7 +18,7 @@ prior_init(params)
 }
 \value{
 A list (\code{prior}) containing the hyperparameter values structured by the parameter block they govern:
-\itemize{
+\describe{
   \item{\code{FE}:}{ Priors for fixed effects and residual variance (e.g., \code{lambda}, \code{a}, \code{b} for conjugate Normal-Gamma).}
   \item{\code{RE}:}{ Inverse-Wishart priors for random effects covariance (\eqn{\Sigma_{RE}}) (e.g., \code{Phi}, \code{eta}).}
   \item{\code{assign}:}{ Priors for the cluster assignment parameters, nested under \code{Cont} (Normal-Inverse-Wishart for continuous) and \code{Cat} (Dirichlet for categorical).}
