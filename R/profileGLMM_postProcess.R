@@ -19,9 +19,9 @@
 #'
 #' @examples
 #' \dontrun{
-#' # Assuming MCMC_output is the result of profileGLMM_Gibbs()
-#' # post_processed <- profileGLMM_postProcess(MCMC_output, modeClus='NG', alpha = 0.10)
-#' # print(post_processed$pop$betaFE)
+#' # Assuming MCMC_Obj is the result of profileGLMM_Gibbs()
+#' post_Obj = profileGLMM_postProcess(MCMC_Obj)
+#' print(post_Obj$pop$betaFE)
 #' }
 profileGLMM_postProcess = function(MCMC_Obj, modeClus='NG', comp_cooc = T, alpha = 0.05){
 

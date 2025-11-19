@@ -55,3 +55,26 @@ A list with\itemize{
 \description{
 Preprocess the data from a list describing the profile LMM model
 }
+\examples{
+\dontrun{
+data("exposure_data")
+exp_data = exposure_data$df
+theta0= exposure_data$theta0
+covList = {}
+covList$FE = c('X')
+covList$RE = c('t')
+covList$REunit = c('indiv')
+
+covList$Lat = c('X')
+
+covList$Assign$Cont = c('Exp1','Exp2')
+covList$Assign$Cat = NULL
+
+covList$Y = c('Y')
+dataProfile = profileGLMM_preprocess(regtype='linear',
+                                     covList = covList,
+                                     dataframe = exp_data,
+                                     nC = 30,
+                                     intercept = list(FE = T, RE = F, Lat = T))
+}
+}

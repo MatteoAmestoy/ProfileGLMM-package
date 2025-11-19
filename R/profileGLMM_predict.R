@@ -21,14 +21,12 @@
 #'
 #' @examples
 #' \dontrun{
-#' # post_obj <- profileGLMM_postProcess(MCMC_output)
-#' # new_data_preds <- profileGLMM_predict(
-#' #   post_Obj = post_obj,
-#' #   XFE = new_XFE,
-#' #   XLat = new_XLat,
-#' #   UCont = new_UCont,
-#' #   UCat = new_UCat
-#' # )
+#' # Assuming post_Obj is the result of profileGLMM_postProcess()
+#' pred_Obj = profileGLMM_predict(post_Obj,
+#'                                dataProfile$d$XFE,
+#'                                dataProfile$d$XLat,
+#'                                dataProfile$d$UCont,
+#'                                dataProfile$d$UCat)
 #' }
 profileGLMM_predict = function(post_Obj, XFE, XLat, UCont, UCat){
   pred = {}
@@ -58,8 +56,6 @@ profileGLMM_predict = function(post_Obj, XFE, XLat, UCont, UCat){
     }
 
     pred$classPred = as.factor(apply(matClassPred,1,which.max))
-    aaa = KhatriRao(as(factor(pred$classPred),Class = "sparseMatrix"),t(XLat),make.dimnames = TRUE)
-
     pred$Int = t(KhatriRao(as(factor(pred$classPred),Class = "sparseMatrix"),t(XLat),make.dimnames = TRUE))%*%gamVec
     pred$Y = pred$Y + pred$Int
   }else{

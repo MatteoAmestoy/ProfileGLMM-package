@@ -28,9 +28,8 @@ This is the main function for fitting the Profile Generalized Linear Mixed Model
 }
 \examples{
 \dontrun{
-# Assuming 'prepped_model' is the output of the data pre-processing step
-# mcmc_chain <- profileGLMM_Gibbs(
-#   model = prepped_model,
+# Assuming 'dataProfile' is the output of the data pre-processing step
+MCMC_Obj = profileGLMM_Gibbs(model = dataProfile,
 #   nIt = 5000,
 #   nBurnIn = 1000
 # )
