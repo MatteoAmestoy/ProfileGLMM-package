@@ -6,8 +6,8 @@
 #' \itemize{
 #'   \item{\code{d}:}{ Data matrices (Y, XFE, XRE, XLat, UCont, UCat).}
 #'   \item{\code{params}:}{ Model dimension parameters (e.g., nC, qRE, qUCont).}
-#'   \item{\code{theta}:}{ Initial values for parameters ($\beta_{FE}, \sigma^2, \Sigma_{RE}, \text{cluster means}, \text{cluster covariance}, \text{cluster prob. vectors}, \Sigma_{Lat}, \gamma_{Lat}$).}
-#'   \item{\code{prior}:}{ Hyperparameters for all prior distributions (e.g., $N, \text{Inverse-Wishart}, \text{Dirichlet}$).}
+#'   \item{\code{theta}:}{ Initial values for parameters (\eqn{\beta_{FE}}, \eqn{\sigma^2}, \eqn{\Sigma_{RE}}, cluster means, cluster covariance, cluster prob. vectors, \eqn{\Sigma_{Lat}}, \eqn{\gamma_{Lat}}).}
+#'   \item{\code{prior}:}{ Hyperparameters for all prior distributions (e.g., Normal, Inverse-Wishart, Dirichlet).}
 #'   \item{\code{regType}:}{ The type of regression being performed.}
 #' }
 #' @param nIt Integer, the total number of MCMC iterations *counting* the burn-in period. The sampler will run for \code{nIt - nBurnIn} iterations in total.

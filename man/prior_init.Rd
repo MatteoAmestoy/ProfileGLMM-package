@@ -20,14 +20,18 @@ prior_init(params)
 A list (\code{prior}) containing the hyperparameter values structured by the parameter block they govern:
 \itemize{
   \item{\code{FE}:}{ Priors for fixed effects and residual variance (e.g., \code{lambda}, \code{a}, \code{b} for conjugate Normal-Gamma).}
-  \item{\code{RE}:}{ Inverse-Wishart priors for random effects covariance ($\Sigma_{RE}$) (e.g., \code{Phi}, \code{eta}).}
+  \item{\code{RE}:}{ Inverse-Wishart priors for random effects covariance (\eqn{\Sigma_{RE}}) (e.g., \code{Phi}, \code{eta}).}
   \item{\code{assign}:}{ Priors for the cluster assignment parameters, nested under \code{Cont} (Normal-Inverse-Wishart for continuous) and \code{Cat} (Dirichlet for categorical).}
-  \item{\code{Lat}:}{ Inverse-Wishart prior for the latent effects covariance ($\Sigma_{Lat}$) (e.g., \code{Phi}, \code{eta}).}
+  \item{\code{Lat}:}{ Inverse-Wishart prior for the latent effects covariance (\eqn{\Sigma_{Lat}}) (e.g., \code{Phi}, \code{eta}).}
   \item{\code{DP}:}{ Parameters for the Dirichlet Process prior (e.g., \code{scale}, \code{shape}).}
 }
 }
 \description{
-This function establishes the prior distributions for all parameters in the Profile GLMM. It sets up vague, non-informative priors (often using small precision/large variance or conjugate forms like Wishart/Dirichlet) for the fixed effects ($\beta_{FE}$), residual variance ($\sigma^2$), random effects covariance ($\Sigma_{RE}$), latent effects covariance ($\Sigma_{Lat}$), cluster parameters (means and covariances), and the Dirichlet Process parameters ($\alpha$).
+This function establishes the prior distributions for all parameters
+in the Profile GLMM. It sets up vague, non-informative priors (often using small
+precision/large variance or conjugate forms like Wishart/Dirichlet) for the fixed effects (\eqn{beta_{FE}}),
+residual variance (\eqn{\sigma^2}), random effects covariance (\eqn{\Sigma_{RE}}), latent effects covariance (\eqn{\Sigma_{Lat}}),
+cluster parameters (means and covariances), and the Dirichlet Process parameters (\eqn{\alpha}).
 }
 \examples{
 \dontrun{

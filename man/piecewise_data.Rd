@@ -7,8 +7,8 @@
 \format{
 A list with 2 components:
 \describe{
-  \item{df}{A data frame with 3,000 rows and 2 variables (the simulated data).}
-  \item{theta0}{A list of 5 elements containing the true parameters used for simulation.}
+   \item{df}{A data frame with 3,000 rows and 2 variables (the simulated data).}
+   \item{theta0}{A list of 5 elements containing the true parameters used for simulation.}
 }
 }
 \source{
@@ -26,15 +26,15 @@ different intercept and slope coefficients are applied to each segment.
 The dataset \code{df} contains $N = 3000$ observations.
 }
 \details{
-The underlying model for the response $\mathbf{Y}$ is:
-$$\mathbf{Y} = \mathbf{X}_{\text{Fe}}\boldsymbol{\beta} + \mathbf{X}_{\text{Lat}}\boldsymbol{\alpha}_{\text{Lat}} + \boldsymbol{\epsilon}$$
-where $\mathbf{X}_{\text{Fe}}$ is the global intercept, and $\mathbf{X}_{\text{Lat}}\boldsymbol{\alpha}_{\text{Lat}}$ models the piecewise relationship of \code{x} across the 6 categories defined in \code{theta0$Lat}. The error term $\boldsymbol{\epsilon} \sim N(0, 1)$.
+The underlying model for the response \eqn{\bold{Y}} is:
+\deqn{\bold{Y} = \bold{X}_{Fe}\bold{\beta} + \bold{X}_{Lat}\bold{\alpha}_{Lat} + \bold{\epsilon}}
+where \eqn{\bold{X}_{Fe}} is the global intercept, and \eqn{\bold{X}_{Lat}}\eqn{\bold{\alpha}_{Lat}} models the piecewise relationship of \code{x} across the 6 categories defined in \code{theta0$Lat}. The error term \eqn{\bold{\epsilon} ~ N(0, 1)}.
 }
 \section{\code{df} Data Variables}{
 
 \describe{
-  \item{x}{A continuous predictor, uniformly distributed between -3 and 3.}
-  \item{Y}{The **Simulated Response Variable** defined by the piecewise linear model.}
+   \item{x}{A continuous predictor, uniformly distributed between -3 and 3.}
+   \item{Y}{The **Simulated Response Variable** defined by the piecewise linear model.}
 }
 }
 
@@ -42,9 +42,9 @@ where $\mathbf{X}_{\text{Fe}}$ is the global intercept, and $\mathbf{X}_{\text{L
 
 The list \code{theta0} holds the true values used for simulation, including:
 \itemize{
-  \item \code{beta}: True global intercept (i.e., (0.5)).
-  \item \code{Lat}: The categorical factor (1 to 6) derived from segmenting \code{x}.
-  \item \code{alphaLat}: Vector of $2 \times 6 = 12$ coefficients defining the specific intercept and slope for \code{x} within each of the 6 segments.
+   \item \code{beta}: True global intercept (i.e., (0.5)).
+   \item \code{Lat}: The categorical factor (1 to 6) derived from segmenting \code{x}.
+   \item \code{alphaLat}: Vector of $2 * 6 = 12$ coefficients defining the specific intercept and slope for \code{x} within each of the 6 segments.
 }
 }
 
