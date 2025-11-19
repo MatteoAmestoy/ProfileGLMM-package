@@ -36,6 +36,7 @@
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' data("exposure_data")
 #' exp_data = exposure_data$df
 #' theta0= exposure_data$theta0
@@ -51,22 +52,23 @@
 #' covList$Assign$Cat = NULL
 #'
 #' covList$Y = c('Y')
-#' dataProfile = profileGLMM_preprocess(regtype='linear',
+#' dataProfile = profileGLMM_preprocess(regType='linear',
 #'                                      covList = covList,
 #'                                      dataframe = exp_data,
 #'                                      nC = 30,
 #'                                      intercept = list(FE = T, RE = F, Lat = T))
+#' }
 
-profileGLMM_preprocess <- function(regtype, covList, dataframe, nC, intercept = list(FE=T,RE=T,Lat =T)) {
+profileGLMM_preprocess <- function(regType, covList, dataframe, nC, intercept = list(FE=T,RE=T,Lat =T)) {
 
   d = {}
   d$names = {}
   params = {}
 
-  if (regtype == 'linear'){
+  if (regType == 'linear'){
     rT = 0
     d$Y = drop(dataframe[,covList$Y])
-  }else if(regtype == 'probit'){
+  }else if(regType == 'probit'){
     rT = 1
     d$Y = factor(dataframe[,covList$Y])
     if( length(levels(d$Y))==2){

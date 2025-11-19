@@ -30,10 +30,13 @@ A list with the following elements:
 This function uses the results of the post-processed Profile GLMM MCMC chain to predict cluster memberships and outcomes for new or existing data. It first calculates the fixed effect (FE) contribution and then, if a representative clustering is available in \code{post_Obj}, computes the predicted cluster membership and the corresponding latent effect (Lat) contribution to the outcome.
 }
 \examples{
+
+\dontrun{
 # Assuming post_Obj is the result of profileGLMM_postProcess()
 pred_Obj = profileGLMM_predict(post_Obj,
                                dataProfile$d$XFE,
                                dataProfile$d$XLat,
                                dataProfile$d$UCont,
                                dataProfile$d$UCat)
+}
 }

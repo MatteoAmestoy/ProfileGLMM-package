@@ -5,7 +5,7 @@
 \title{Preprocess the data from a list describing the profile LMM model}
 \usage{
 profileGLMM_preprocess(
-  regtype,
+  regType,
   covList,
   dataframe,
   nC,
@@ -13,6 +13,8 @@ profileGLMM_preprocess(
 )
 }
 \arguments{
+\item{regType}{A string, current possibilities: linear or probit}
+
 \item{covList}{A list with fields:\itemize{
 \item  FE fixed effect covariates names/index in dataframe
 \item  RE random effect covariates names/index in dataframe
@@ -32,8 +34,6 @@ profileGLMM_preprocess(
 \item  RE bool indicating if FE have an intercept
 \item  FE bool indicating if RE have an intercept
 \item  Lat bool indicating if Latent have an intercept}}
-
-\item{regType}{A string, current possibilities: linear or probit}
 }
 \value{
 A list with\itemize{
@@ -56,6 +56,7 @@ A list with\itemize{
 Preprocess the data from a list describing the profile LMM model
 }
 \examples{
+\dontrun{
 data("exposure_data")
 exp_data = exposure_data$df
 theta0= exposure_data$theta0
@@ -70,9 +71,10 @@ covList$Assign$Cont = c('Exp1','Exp2')
 covList$Assign$Cat = NULL
 
 covList$Y = c('Y')
-dataProfile = profileGLMM_preprocess(regtype='linear',
+dataProfile = profileGLMM_preprocess(regType='linear',
                                      covList = covList,
                                      dataframe = exp_data,
                                      nC = 30,
                                      intercept = list(FE = T, RE = F, Lat = T))
+}
 }

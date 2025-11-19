@@ -27,9 +27,11 @@ A list containing the saved Gibbs-sampled MCMC chains for all model parameters (
 This is the main function for fitting the Profile Generalized Linear Mixed Model (Profile GLMM) using a blocked Gibbs sampling algorithm. It acts as an R wrapper, passing pre-processed data, initial values, and prior hyperparameters contained in the \code{model} object directly to the C++ implementation \code{GSLoopCPP}. The function simulates the posterior distribution of all model parameters, including fixed effects, random effects variance, profile cluster parameters, latent effects, and cluster assignments.
 }
 \examples{
+\dontrun{
 # Assuming 'dataProfile' is the output of the data pre-processing step
 MCMC_Obj = profileGLMM_Gibbs(model = dataProfile,
 #   nIt = 5000,
 #   nBurnIn = 1000
 # )
+}
 }

@@ -19,7 +19,7 @@ Authors@R: c(
       role = c("ths")
     )
   )
-Description: This package implements a Bayesian profile regression using a generalized linear mixed model as output model. The package allows for binary (probit mixed model) and continuous (linear mixed model) outcomes and both continuous and categorical clustering variables. The package utilizes 'RcppArmadillo' and 'RcppDist' for high-performance statistical computing in C++.
+Description: Implements a Bayesian profile regression using a generalized linear mixed model as output model. The package allows for binary (probit mixed model) and continuous (linear mixed model) outcomes and both continuous and categorical clustering variables. The package utilizes 'RcppArmadillo' and 'RcppDist' for high-performance statistical computing in C++.
 License: GPL-2
 Encoding: UTF-8
 LazyData: true
@@ -31,7 +31,12 @@ LinkingTo:
 Imports: 
     Rcpp,
     RcppArmadillo,
-    RcppDist
+    RcppDist,
+    LaplacesDemon,
+    MCMCpack,
+    Matrix,
+    Spectrum,
+    mvtnorm
 Depends: 
     R (>= 3.5)
 URL: https://github.com/MatteoAmestoy/ProfileGLMM-package
