@@ -59,8 +59,8 @@ prior_init = function(params){
 
 
   prior$Lat = {}
-  prior$Lat$eta = params$qLat+4
-  prior$Lat$Phi = diag(params$qLat)*(prior$Lat$eta)/2
+  prior$Lat$eta = params$qLat
+  prior$Lat$Phi = diag(params$qLat)
 
 
   prior$DP = {}
