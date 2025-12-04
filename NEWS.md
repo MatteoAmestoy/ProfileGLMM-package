@@ -1,3 +1,5 @@
+# ProfileGLMM 1.0.1
+
 # ProfileGLMM 1.0.0
 
 # ProfileGLMM 0.1.0
