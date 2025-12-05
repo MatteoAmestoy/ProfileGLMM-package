@@ -18,7 +18,6 @@
 #' @importFrom mvtnorm dmvnorm
 #' @importFrom stats dnorm
 #' @importFrom Matrix KhatriRao t
-#' @importFrom methods as
 #'
 #' @examples
 #'

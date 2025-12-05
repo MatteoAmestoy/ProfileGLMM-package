@@ -30,12 +30,13 @@ LinkingTo:
     RcppDist
 Imports: 
     Rcpp,
+    RcppArmadillo,
+    RcppDist,
     LaplacesDemon,
     MCMCpack,
     Matrix,
     Spectrum,
-    mvtnorm,
-    methods
+    mvtnorm
 Depends: 
     R (>= 3.5)
 URL: https://github.com/MatteoAmestoy/ProfileGLMM-package
