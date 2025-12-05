@@ -17,7 +17,7 @@
 #' @export
 #' @importFrom mvtnorm dmvnorm
 #' @importFrom stats dnorm
-#' @importFrom Matrix KhatriRao t
+#' @importFrom Matrix KhatriRao t sparse.model.matrix
 #'
 #' @examples
 #'
