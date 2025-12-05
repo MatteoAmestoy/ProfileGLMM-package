@@ -1,7 +1,7 @@
 Package: ProfileGLMM
 Type: Package
 Title: Bayesian Profile Regression using Generalised Linear Mixed Models
-Version: 1.0.1
+Version: 1.0.2
 Authors@R: c(
     person(
       "Matteo", "Amestoy",
