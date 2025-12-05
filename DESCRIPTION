@@ -30,8 +30,6 @@ LinkingTo:
     RcppDist
 Imports: 
     Rcpp,
-    RcppArmadillo,
-    RcppDist,
     LaplacesDemon,
     MCMCpack,
     Matrix,

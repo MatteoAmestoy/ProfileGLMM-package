@@ -58,7 +58,7 @@ profileGLMM_predict = function(post_Obj, XFE, XLat, UCont, UCat){
     }
 
     pred$classPred = as.factor(apply(matClassPred,1,which.max))
-    pred$Int = t(KhatriRao(as(factor(pred$classPred),Class = "sparseMatrix"),t(XLat),make.dimnames = TRUE))%*%gamVec
+    pred$Int = t(KhatriRao(t(sparse.model.matrix(~ 0 + factor(pred$classPred))),t(XLat),make.dimnames = TRUE))%*%gamVec
     pred$Y = pred$Y + pred$Int
   }else{
     print('No representative clustering provided')
