@@ -7,8 +7,8 @@
 \format{
 A list with 2 components:
 \describe{
-   \item{df}{A data frame with 3,000 rows and 2 variables (the simulated data).}
-   \item{theta0}{A list of 5 elements containing the true parameters used for simulation.}
+\item{df}{A data frame with 3,000 rows and 2 variables (the simulated data).}
+\item{theta0}{A list of 5 elements containing the true parameters used for simulation.}
 }
 }
 \source{
@@ -33,8 +33,8 @@ where \eqn{\bold{X}_{Fe}} is the global intercept, and \eqn{\bold{X}_{Lat}}\eqn{
 \section{\code{df} Data Variables}{
 
 \describe{
-   \item{x}{A continuous predictor, uniformly distributed between -3 and 3.}
-   \item{Y}{The **Simulated Response Variable** defined by the piecewise linear model.}
+\item{x}{A continuous predictor, uniformly distributed between -3 and 3.}
+\item{Y}{The **Simulated Response Variable** defined by the piecewise linear model.}
 }
 }
 
@@ -42,9 +42,9 @@ where \eqn{\bold{X}_{Fe}} is the global intercept, and \eqn{\bold{X}_{Lat}}\eqn{
 
 The list \code{theta0} holds the true values used for simulation, including:
 \itemize{
-   \item \code{beta}: True global intercept (i.e., (0.5)).
-   \item \code{Lat}: The categorical factor (1 to 6) derived from segmenting \code{x}.
-   \item \code{alphaLat}: Vector of $2 * 6 = 12$ coefficients defining the specific intercept and slope for \code{x} within each of the 6 segments.
+\item \code{beta}: True global intercept (i.e., (0.5)).
+\item \code{Lat}: The categorical factor (1 to 6) derived from segmenting \code{x}.
+\item \code{alphaLat}: Vector of $2 * 6 = 12$ coefficients defining the specific intercept and slope for \code{x} within each of the 6 segments.
 }
 }
 

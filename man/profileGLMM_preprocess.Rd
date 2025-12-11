@@ -9,7 +9,7 @@ profileGLMM_preprocess(
   covList,
   dataframe,
   nC,
-  intercept = list(FE = T, RE = T, Lat = T)
+  intercept = list(FE = TRUE, RE = TRUE, Lat = TRUE)
 )
 }
 \arguments{
@@ -56,10 +56,9 @@ A list with\itemize{
 Preprocess the data from a list describing the profile LMM model
 }
 \examples{
-\dontrun{
 data("exposure_data")
 exp_data = exposure_data$df
-theta0= exposure_data$theta0
+theta0 = exposure_data$theta0
 covList = {}
 covList$FE = c('X')
 covList$RE = c('t')
@@ -71,10 +70,9 @@ covList$Assign$Cont = c('Exp1','Exp2')
 covList$Assign$Cat = NULL
 
 covList$Y = c('Y')
-dataProfile = profileGLMM_preprocess(regType='linear',
+dataProfile = profileGLMM_preprocess(regType = 'linear',
                                      covList = covList,
                                      dataframe = exp_data,
                                      nC = 30,
-                                     intercept = list(FE = T, RE = F, Lat = T))
-}
+                                     intercept = list(FE = TRUE, RE = FALSE, Lat = TRUE))
 }

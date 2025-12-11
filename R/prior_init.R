@@ -26,10 +26,9 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
-#' # Assuming problem_params is available (e.g., qRE=2, qUCont=3, etc.)
-#' # prior_config <- prior_init(params = problem_params)
-#' }
+#' # Assuming dataProfile is the output of the profileGLMM_preprocess() example
+#' prior_config <- prior_init(dataProfile$params)
+
 prior_init = function(params){
   nC = params$nC
   prior ={}

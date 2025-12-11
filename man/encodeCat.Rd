@@ -20,10 +20,7 @@ A \code{data.frame} where:
 This function takes a dataframe, identifies all columns of class \code{factor}, and converts them into **dummy variables** using one-hot encoding via \code{stats::model.matrix}. For each factor, the function explicitly removes the first dummy variable generated, effectively making the **first level** of the factor the **reference level** (omitted category). Non-factor columns are retained as is.
 }
 \examples{
-\dontrun{
-# Example usage (assuming 'mydata' is available):
-# mydata$Gender = as.factor(mydata$Gender)
-# encoded_data = encodeCat(mydata)
-
-}
+# Assumind data as been loaded and covlist is defined as in the
+# profileGLMM_preprocess() example
+XFE = encodeCat(exp_data[,covList$FE, drop = FALSE])
 }

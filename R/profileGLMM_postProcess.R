@@ -18,13 +18,12 @@
 #' @importFrom Spectrum estimate_k cluster_similarity
 #'
 #' @examples
-#' \dontrun{
 #' # Assuming MCMC_Obj is the result of profileGLMM_Gibbs()
-#' post_Obj = profileGLMM_postProcess(MCMC_Obj)
+#' # here the LS clustering model is selected for speed
+#' post_Obj = profileGLMM_postProcess(MCMC_Obj, modeClus='LS')
 #' print(post_Obj$pop$betaFE)
-#' }
 
-profileGLMM_postProcess = function(MCMC_Obj, modeClus='NG', comp_cooc = T, alpha = 0.05){
+profileGLMM_postProcess = function(MCMC_Obj, modeClus='NG', comp_cooc = TRUE, alpha = 0.05){
 
   nSim = dim(MCMC_Obj$Z)[2]
   nUCat = dim(MCMC_Obj$pvec)[1]
@@ -53,21 +52,21 @@ profileGLMM_postProcess = function(MCMC_Obj, modeClus='NG', comp_cooc = T, alpha
       Zstar = MCMC_Obj$Z[,idx]
       Kstar = length(unique(Zstar))
       mode = 'LS'
-      clus = T
+      clus = TRUE
     }else if (modeClus=='NG'){
-      tmp = estimate_k(cooc, maxk = 15,showplots=F)
+      tmp = estimate_k(cooc, maxk = 15,showplots=FALSE)
       diffs <- diff(tmp$evals)
       diffs <- diffs[-1]
       Kstar <- which.max(abs(diffs[1:15 - 1])) + 1
       Zstar = cluster_similarity(cooc, k = Kstar, specalg = "Ng")
 
       mode = 'NG'
-      clus = T
+      clus = TRUE
     }else{
-      print('No valid clustering method provided returning only the coocurency
+      warning('No valid clustering method provided returning only the coocurency
           matrix')
       rep_clust = NULL
-      clus = F
+      clus = FALSE
     }
 
     if(clus){

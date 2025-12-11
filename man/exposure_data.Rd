@@ -7,8 +7,8 @@
 \format{
 A list with 2 components:
 \describe{
-   \item{df}{A data frame with 4,500 rows and 6 variables (the simulated data).}
-   \item{theta0}{A list of 11 elements containing the true parameters used for simulation.}
+\item{df}{A data frame with 4,500 rows and 6 variables (the simulated data).}
+\item{theta0}{A list of 11 elements containing the true parameters used for simulation.}
 }
 }
 \source{
@@ -31,11 +31,11 @@ The underlying model for the response \eqn{\bold{Y}} is:
 \section{\code{df} Data Variables}{
 
 \describe{
-   \item{X}{Continuous predictor (\eqn{\sim N(0, 1)}).}
-   \item{t}{Time-like variable (structured around 0, 1, 2).}
-   \item{indiv}{**Individual ID** (1 to 1500), the grouping factor.}
-   \item{Exp1, Exp2}{Exposure continuous predictors.}
-   \item{Y}{The **Simulated Response Variable** calculated as: \eqn{\bold{Y} = y_{Fe} + y_{Int} + y_{Re} + \epsilon}, where \eqn{\epsilon ~ N(0, 1)}.}
+\item{X}{Continuous predictor (\eqn{\sim N(0, 1)}).}
+\item{t}{Time-like variable (structured around 0, 1, 2).}
+\item{indiv}{**Individual ID** (1 to 1500), the grouping factor.}
+\item{Exp1, Exp2}{Exposure continuous predictors.}
+\item{Y}{The **Simulated Response Variable** calculated as: \eqn{\bold{Y} = y_{Fe} + y_{Int} + y_{Re} + \epsilon}, where \eqn{\epsilon ~ N(0, 1)}.}
 }
 }
 
@@ -43,11 +43,11 @@ The underlying model for the response \eqn{\bold{Y}} is:
 
 The list \code{theta0} holds the true values used to generate \code{Y}, including:
 \itemize{
-   \item \code{Lat}: **Categorical Factor** (9 levels), defining the clusters for interaction effects.
-   \item \code{beta}: True fixed effects for the global intercept and \eqn{\bold{X}} (i.e., $(3, 2)$).
-   \item \code{alphaLat}: Vector of 18 coefficients defining the cluster-specific intercepts and slopes for \eqn{\bold{X}} within the 9 \code{Lat} categories.
-   \item \code{alphaRE}: Vector of 1500 random slopes for the time variable \eqn{\bold{t}}, drawn from $N(0, 1)$.
-   \item \code{sigma}: Residual standard deviation (1).
+\item \code{Lat}: **Categorical Factor** (9 levels), defining the clusters for interaction effects.
+\item \code{beta}: True fixed effects for the global intercept and \eqn{\bold{X}} (i.e., $(3, 2)$).
+\item \code{alphaLat}: Vector of 18 coefficients defining the cluster-specific intercepts and slopes for \eqn{\bold{X}} within the 9 \code{Lat} categories.
+\item \code{alphaRE}: Vector of 1500 random slopes for the time variable \eqn{\bold{t}}, drawn from $N(0, 1)$.
+\item \code{sigma}: Residual standard deviation (1).
 }
 }
 

@@ -21,28 +21,23 @@
 #' @importFrom MCMCpack rdirichlet
 #'
 #' @examples
-#' \dontrun{
-#' # Assuming prior_config and problem_params are available
-#' # initial_theta <- theta_init(
-#' #   prior = prior_config,
-#' #   params = problem_params
-#' # )
-#' }
+#' # Assuming dataProfile is the output of the profileGLMM_preprocess() example
+#' theta = theta_init(dataProfile$prior,dataProfile$params)
+
 theta_init = function(prior,params){
   nC = params$nC
   theta = {}
-  theta$sig2 = rgamma(1,1,1)#rgamma(1,prior$FE$a,prior$FE$b)
+  theta$sig2 = rgamma(1,1,1)
 
   theta$betaFE = rnorm(params$qFE,0,theta$sig2/sqrt(prior$FE$lambda))
 
   if(params$qRE>0){
-    theta$SigRE = rinvwishart(prior$RE$eta,prior$RE$Phi) #
+    theta$SigRE = rinvwishart(prior$RE$eta,prior$RE$Phi)
   }else{
     theta$SigRE = diag(1)
   }
 
-  theta$SigLat = rinvwishart(prior$Lat$eta,prior$Lat$Phi) #
-  # theta$betaLat = rnorm(params$qLat,0,theta$sig2/sqrt(prior$FE$lambda))
+  theta$SigLat = rinvwishart(prior$Lat$eta,prior$Lat$Phi)
 
   theta$gammaLat = matrix(0,nrow = params$qLat,ncol = nC)
   for (c in 1:nC){

@@ -20,15 +20,13 @@
 #' @importFrom Matrix KhatriRao t sparse.model.matrix
 #'
 #' @examples
-#'
-#' \dontrun{
 #' # Assuming post_Obj is the result of profileGLMM_postProcess()
 #' pred_Obj = profileGLMM_predict(post_Obj,
 #'                                dataProfile$d$XFE,
 #'                                dataProfile$d$XLat,
 #'                                dataProfile$d$UCont,
 #'                                dataProfile$d$UCat)
-#' }
+
 
 profileGLMM_predict = function(post_Obj, XFE, XLat, UCont, UCat){
   pred = {}
@@ -61,7 +59,7 @@ profileGLMM_predict = function(post_Obj, XFE, XLat, UCont, UCat){
     pred$Int = t(KhatriRao(t(sparse.model.matrix(~ 0 + factor(pred$classPred))),t(XLat),make.dimnames = TRUE))%*%gamVec
     pred$Y = pred$Y + pred$Int
   }else{
-    print('No representative clustering provided')
+    warning('No representative clustering provided')
     pred$classPred = NULL
     pred$Int = NULL
   }

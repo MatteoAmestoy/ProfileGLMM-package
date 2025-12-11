@@ -36,10 +36,9 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
 #' data("exposure_data")
 #' exp_data = exposure_data$df
-#' theta0= exposure_data$theta0
+#' theta0 = exposure_data$theta0
 #' covList = {}
 #' covList$FE = c('X')
 
@@ -52,14 +51,14 @@
 #' covList$Assign$Cat = NULL
 #'
 #' covList$Y = c('Y')
-#' dataProfile = profileGLMM_preprocess(regType='linear',
+#' dataProfile = profileGLMM_preprocess(regType = 'linear',
 #'                                      covList = covList,
 #'                                      dataframe = exp_data,
 #'                                      nC = 30,
-#'                                      intercept = list(FE = T, RE = F, Lat = T))
-#' }
+#'                                      intercept = list(FE = TRUE, RE = FALSE, Lat = TRUE))
 
-profileGLMM_preprocess <- function(regType, covList, dataframe, nC, intercept = list(FE=T,RE=T,Lat =T)) {
+
+profileGLMM_preprocess <- function(regType, covList, dataframe, nC, intercept = list(FE=TRUE,RE=TRUE,Lat =TRUE)) {
 
   d = {}
   d$names = {}
@@ -72,7 +71,7 @@ profileGLMM_preprocess <- function(regType, covList, dataframe, nC, intercept = 
     rT = 1
     d$Y = factor(dataframe[,covList$Y])
     if( length(levels(d$Y))==2){
-      print(paste0('Reference category (Y = 1) for Y = ',levels(d$Y)[2]))
+      message(paste0('Reference category (Y = 1) for Y = ',levels(d$Y)[2]))
       d$Y = (d$Y==levels(d$Y)[2])}else{
         stop(paste0(covList$Y,' has ',length(levels(d$Y)),' levels, while 2 expected.'))
       }
@@ -103,7 +102,7 @@ profileGLMM_preprocess <- function(regType, covList, dataframe, nC, intercept = 
       d$names$RE = c('Intercept')
       d$XRE = as.matrix(rep(1,n))
     }else{
-      print('Warning: no random effects provided')
+      warning('Warning: no random effects provided')
       d$XRE = NULL
       d$names$RE = NULL
     }

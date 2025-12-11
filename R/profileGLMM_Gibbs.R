@@ -16,13 +16,14 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
-#' # Assuming 'dataProfile' is the output of the data pre-processing step
+#' # Assuming 'dataProfile' is the output of the profileGLMM_preprocess example
+#' # The length of the chain is set to small values for time reasons
 #' MCMC_Obj = profileGLMM_Gibbs(model = dataProfile,
-#' #   nIt = 5000,
-#' #   nBurnIn = 1000
-#' # )
-#' }
+#'    nIt = 100,
+#'    nBurnIn = 10
+#'  )
+#'
+
 profileGLMM_Gibbs = function(model,nIt,nBurnIn){
 
 
