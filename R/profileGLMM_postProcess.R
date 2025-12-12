@@ -18,8 +18,9 @@
 #' @importFrom Spectrum estimate_k cluster_similarity
 #'
 #' @examples
-#' # Assuming MCMC_Obj is the result of profileGLMM_Gibbs()
-#' # here the LS clustering model is selected for speed
+#' # Load MCMC_Obj, the result of profileGLMM_Gibbs()
+#' data("examp")
+#' MCMC_Obj = examp$MCMC_Obj
 #' post_Obj = profileGLMM_postProcess(MCMC_Obj, modeClus='LS')
 #' print(post_Obj$pop$betaFE)
 

@@ -34,6 +34,8 @@ residual variance (\eqn{\sigma^2}), random effects covariance (\eqn{\Sigma_{RE}}
 cluster parameters (means and covariances), and the Dirichlet Process parameters (\eqn{\alpha}).
 }
 \examples{
-# Assuming dataProfile is the output of the profileGLMM_preprocess() example
+# Load dataProfile, the result of profileGLMM_preProcess()
+data("examp")
+dataProfile = examp$dataProfile
 prior_config <- prior_init(dataProfile$params)
 }

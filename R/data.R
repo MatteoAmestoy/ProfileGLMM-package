@@ -39,6 +39,7 @@
 #' @source Generated synthetically by the package authors.
 #' @keywords datasets
 "exposure_data"
+
 # --- Documentation for the piecewise dataset starts here ---
 
 #' @title Simulated Data and Parameters for a Piecewise Example
@@ -79,3 +80,25 @@
 #' @source Generated synthetically by the package authors.
 #' @keywords datasets
 "piecewise_data"
+
+
+
+# --- Documentation for the presaved outputs for examples  ---
+
+#' @title List of the different outputs of the main function for examples
+#'
+#' @description
+#' A list of the different outputs of the main function for examples
+#'
+#'
+#' @format A list with 4 components:
+#' \describe{
+#' \item{dataProfile}{Output of the profileGLMM_preprocess() function example}
+#' \item{MCMC_Obj}{Output of the profileGLMM_Gibbs() function example}
+#' \item{post_Obj}{Output of the profileGLMM_postprocess() function example}
+#' \item{pred_Obj}{Output of the profileGLMM_predict() function example}
+#' }
+
+#' @source Generated synthetically by the package authors.
+#' @keywords datasets
+"examp"

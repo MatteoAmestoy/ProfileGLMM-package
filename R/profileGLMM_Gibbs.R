@@ -16,8 +16,9 @@
 #' @export
 #'
 #' @examples
-#' # Assuming 'dataProfile' is the output of the profileGLMM_preprocess example
-#' # The length of the chain is set to small values for time reasons
+#' # Load dataProfile, the result of profileGLMM_pREProcess()
+#' data("examp")
+#' dataProfile = examp$dataProfile
 #' MCMC_Obj = profileGLMM_Gibbs(model = dataProfile,
 #'    nIt = 100,
 #'    nBurnIn = 10

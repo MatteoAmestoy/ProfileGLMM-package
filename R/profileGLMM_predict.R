@@ -20,7 +20,11 @@
 #' @importFrom Matrix KhatriRao t sparse.model.matrix
 #'
 #' @examples
-#' # Assuming post_Obj is the result of profileGLMM_postProcess()
+#' # Load post_Obj, the result of profileGLMM_postProcess()
+#' data("examp")
+#' post_Obj = examp$post_Obj
+#' # Load dataProfile, the result of profileGLMM_preProcess()
+#' dataProfile = examp$dataProfile
 #' pred_Obj = profileGLMM_predict(post_Obj,
 #'                                dataProfile$d$XFE,
 #'                                dataProfile$d$XLat,
@@ -35,7 +39,6 @@ profileGLMM_predict = function(post_Obj, XFE, XLat, UCont, UCat){
   pred$Y = pred$FE
 
   if(!is.null(post_Obj$clust)){
-    gamVec = c(post_Obj$clust$gamma)
     matClassPred = matrix(1,nrow = n,ncol = post_Obj$clust$Kstar)
     for( c in 1:post_Obj$clust$Kstar){
       if(!is.null(UCont)){
@@ -56,6 +59,7 @@ profileGLMM_predict = function(post_Obj, XFE, XLat, UCont, UCat){
     }
 
     pred$classPred = as.factor(apply(matClassPred,1,which.max))
+    gamVec = c(post_Obj$clust$gamma[,sort(unique(pred$classPred))])
     pred$Int = t(KhatriRao(t(sparse.model.matrix(~ 0 + factor(pred$classPred))),t(XLat),make.dimnames = TRUE))%*%gamVec
     pred$Y = pred$Y + pred$Int
   }else{

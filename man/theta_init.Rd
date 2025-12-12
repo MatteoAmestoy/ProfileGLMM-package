@@ -27,6 +27,8 @@ A list (\code{theta}) containing the sampled initialization values for the Gibbs
 This function generates initial values (\code{theta}) for all parameters in the Profile GLMM Gibbs sampler by drawing from the specified prior distributions. These initial values are crucial for starting the MCMC chain in \code{profileGLMM_Gibbs}. The initialization includes parameters for fixed effects, random effects variance, latent effects, and the profile cluster parameters (centroids, covariances, and categorical probability vectors).
 }
 \examples{
-# Assuming dataProfile is the output of the profileGLMM_preprocess() example
+# Load dataProfile, the result of profileGLMM_preProcess()
+data("examp")
+dataProfile = examp$dataProfile
 theta = theta_init(dataProfile$prior,dataProfile$params)
 }

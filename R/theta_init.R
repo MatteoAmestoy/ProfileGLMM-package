@@ -21,7 +21,9 @@
 #' @importFrom MCMCpack rdirichlet
 #'
 #' @examples
-#' # Assuming dataProfile is the output of the profileGLMM_preprocess() example
+#' # Load dataProfile, the result of profileGLMM_preProcess()
+#' data("examp")
+#' dataProfile = examp$dataProfile
 #' theta = theta_init(dataProfile$prior,dataProfile$params)
 
 theta_init = function(prior,params){

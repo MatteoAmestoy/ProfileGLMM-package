@@ -13,8 +13,10 @@
 #' @importFrom stats model.matrix as.formula
 #'
 #' @examples
-#' # Assumind data as been loaded and covlist is defined as in the
-#' # profileGLMM_preprocess() example
+#' data("exposure_data")
+#' exp_data = exposure_data$df
+#' covList = {}
+#' covList$FE = c('X')
 #' XFE = encodeCat(exp_data[,covList$FE, drop = FALSE])
 encodeCat = function(dataframe){
   typeCol = sapply(dataframe, class)

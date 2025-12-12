@@ -26,7 +26,9 @@
 #' @export
 #'
 #' @examples
-#' # Assuming dataProfile is the output of the profileGLMM_preprocess() example
+#' # Load dataProfile, the result of profileGLMM_preProcess()
+#' data("examp")
+#' dataProfile = examp$dataProfile
 #' prior_config <- prior_init(dataProfile$params)
 
 prior_init = function(params){
