@@ -1,4 +1,3 @@
-
 #' Preprocess the data from a list describing the profile LMM model
 #' @param regType A string, current possibilities: linear or probit
 #' @param covList A list with fields:\itemize{
@@ -18,11 +17,11 @@
 #' \item  FE bool indicating if RE have an intercept
 #' \item  Lat bool indicating if Latent have an intercept}
 #'
-#' @returns A list with\itemize{
+#' @returns An object of class \code{pglmm_data}. This is a list with\itemize{
 #' \item  d dictionary with  [XFE,XRE,XLat,UCont,UCat,ZRE] design matrices
 #' \item  [[params]] list of the parameters of the data\itemize{
 #'                  \item  n int nb of obs
-#'                  \item  qFE lint, number of covariates of FE
+#'                  \item  qFE int, number of covariates of FE
 #'                  \item  nRE int, number of stat units of RE
 #'                  \item  qRE int, number of covariates of RE
 #'                  \item  qLat int, number of covariates interacting with the
@@ -63,7 +62,7 @@ profileGLMM_preprocess <- function(regType, covList, dataframe, nC, intercept = 
   d = {}
   d$names = {}
   params = {}
-
+  d$names$Y = covList$Y
   if (regType == 'linear'){
     rT = 0
     d$Y = drop(dataframe[,covList$Y])
@@ -154,8 +153,10 @@ profileGLMM_preprocess <- function(regType, covList, dataframe, nC, intercept = 
 
   if (length(covList$REunit)!=0){
     d$ZRE = as.numeric(factor(dataframe[,covList$REunit]))-1
+    d$names$REunit = covList$REunit
   }else {
     d$ZRE = as.matrix(rep(-1,n))
+    d$names$REunit = "No random effect"
   }
 
   params$n = dim(d$XFE)[1]
@@ -177,10 +178,13 @@ profileGLMM_preprocess <- function(regType, covList, dataframe, nC, intercept = 
   params$nC = nC
   prior = prior_init(params)
   theta = theta_init(prior,params)
-  return(list(d = d,
+
+  res <- list(d = d,
               params = params,
               prior = prior,
               theta = theta,
-              regType = rT))
+              regType = rT)
+  class(res) <- "pglmm_data"
+  return(res)
 
 }

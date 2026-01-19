@@ -1,32 +1,39 @@
 #' @title R Wrapper for Profile GLMM Gibbs Sampler (C++ backend)
 #'
-#' @description This is the main function for fitting the Profile Generalized Linear Mixed Model (Profile GLMM) using a blocked Gibbs sampling algorithm. It acts as an R wrapper, passing pre-processed data, initial values, and prior hyperparameters contained in the \code{model} object directly to the C++ implementation \code{GSLoopCPP}. The function simulates the posterior distribution of all model parameters, including fixed effects, random effects variance, profile cluster parameters, latent effects, and cluster assignments.
+#' @description This is the main function for fitting the Profile Generalized Linear Mixed Model
+#' using a blocked Gibbs sampling algorithm. It acts as an R wrapper, passing an object of class
+#' \code{pglmm_data} directly to the RCPP implementation \code{GSLoopCPP}. The function simulates the
+#' posterior distribution of all model parameters, including fixed effects, random effects variance,
+#' profile cluster parameters, latent effects, and cluster assignments.
 #'
-#' @param model A list object containing all data, initial parameter values, model dimensions, prior hyperparameters, and model configuration (e.g., regression type). This object is typically the output of a data processing function like \code{process_Data_outcome}. Key components include:
-#' \describe{
-#'   \item{\code{d}:}{ Data matrices (Y, XFE, XRE, XLat, UCont, UCat).}
-#'   \item{\code{params}:}{ Model dimension parameters (e.g., nC, qRE, qUCont).}
-#'   \item{\code{theta}:}{ Initial values for parameters (\eqn{\beta_{FE}}, \eqn{\sigma^2}, \eqn{\Sigma_{RE}}, cluster means, cluster covariance, cluster prob. vectors, \eqn{\Sigma_{Lat}}, \eqn{\gamma_{Lat}}).}
-#'   \item{\code{prior}:}{ Hyperparameters for all prior distributions (e.g., Normal, Inverse-Wishart, Dirichlet).}
-#'   \item{\code{regType}:}{ The type of regression being performed.}
-#' }
-#' @param nIt Integer, the total number of MCMC iterations *counting* the burn-in period. The sampler will run for \code{nIt - nBurnIn} iterations in total.
-#' @param nBurnIn Integer, the number of initial MCMC iterations that are discarded (not saved) to allow the chain to converge.
-#' @returns A list containing the saved Gibbs-sampled MCMC chains for all model parameters (e.g., \code{beta}, \code{Z}, \code{gamma}, \code{pvec}, \code{muClus}, \code{PhiClus}, etc.) and the variable names from the original data. This output is ready for post-processing with \code{profileGLMM_postProcess}.
+#' @param model An object of class \code{glmm_data} (the output of \code{profileGLMM_preprocess}).
+#' This contains the design matrices, initial values, dimensions, and prior hyperparameters.
+#' @param nIt Integer, the total number of MCMC iterations counting the burn-in period.
+#' The sampler will return \code{nIt - nBurnIn} iterations in total.
+#' @param nBurnIn Integer, the number of initial MCMC iterations that are discarded (not saved)
+#' to allow the chain to converge.
+#'
+#' @return An object of class \code{pglmm_mcmc}. This is a list containing the saved Gibbs-sampled
+#' MCMC chains for all model parameters (e.g., \code{beta}, \code{Z}, \code{gamma}, \code{pvec}, \code{muClus}, \code{PhiClus}, etc.)
+#' and the variable names from the original data.
+#' This output is intended for post-processing with \code{profileGLMM_postProcess}.
+#'
 #' @export
 #'
 #' @examples
-#' # Load dataProfile, the result of profileGLMM_pREProcess()
+#' # Load examp, which contains a pre-processed pglmm_data object
 #' data("examp")
 #' dataProfile = examp$dataProfile
-#' MCMC_Obj = profileGLMM_Gibbs(model = dataProfile,
-#'    nIt = 100,
-#'    nBurnIn = 10
-#'  )
 #'
-
+#' # Run the Gibbs Sampler
+#' MCMC_Obj = profileGLMM_Gibbs(
+#'   model = dataProfile,
+#'   nIt = 100,
+#'   nBurnIn = 10
+#' )
 profileGLMM_Gibbs = function(model,nIt,nBurnIn){
 
+  if (!inherits(model, "pglmm_data")) stop("Input must be a pglmm_data object.")
 
   if(model$regType==1){model$theta$sig2=1}
   if (is.null(model$d$XRE)){model$d$XRE = matrix() }
@@ -68,5 +75,6 @@ profileGLMM_Gibbs = function(model,nIt,nBurnIn){
                         model$prior$DP$shape,
                         model$regType)
   gibbs_out$names = model$d$names
+  class(gibbs_out) <- "pglmm_mcmc"
   return(gibbs_out)
 }

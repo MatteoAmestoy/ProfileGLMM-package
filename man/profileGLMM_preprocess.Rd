@@ -36,11 +36,11 @@ profileGLMM_preprocess(
 \item  Lat bool indicating if Latent have an intercept}}
 }
 \value{
-A list with\itemize{
+An object of class \code{pglmm_data}. This is a list with\itemize{
 \item  d dictionary with  [XFE,XRE,XLat,UCont,UCat,ZRE] design matrices
 \item  [[params]] list of the parameters of the data\itemize{
                  \item  n int nb of obs
-                 \item  qFE lint, number of covariates of FE
+                 \item  qFE int, number of covariates of FE
                  \item  nRE int, number of stat units of RE
                  \item  qRE int, number of covariates of RE
                  \item  qLat int, number of covariates interacting with the
