@@ -17,6 +17,34 @@ print.pglmm_fit <- function(x, ...) {
   invisible(x)
 }
 
+#' Print method for pglmm_fit
+#'
+#' @param x An object of class \code{pglmm_fit}
+#' @param ... Additional arguments
+#'
+#' @exportS3Method print pglmm_fit
+summary.pglmm_fit <- function(x, ...) {
+  cat("--- pglmm_fit summary ---\n")
+
+  cat("-- Fixed effect estimates: \n")
+  print(x$pop$betaFE)
+  cat(" \n")
+  if (!is.null(x$clust$Kstar)) {
+    cat("-- Representative clustering estimates -- \n")
+    cat("Method used:", x$clust$mode,", clusters found:", x$clust$Kstar, "\n")
+    cat("Cluster centroids: \n")
+    print(x$clus$cen)
+    cat("Cluster interaction parameters: \n")
+    print(x$clus$gamma)
+  } else {
+    cat("Representative clustering not computed.\n")
+  }
+  invisible(x)
+}
+
+
+
+
 #' @title Prediction of cluster memberships and outcomes
 #' @description (This documentation is now for internal use only)
 #' @param object An object of class \code{pglmm_fit} .
@@ -39,5 +67,5 @@ print.pglmm_fit <- function(x, ...) {
 #'
 #'
 predict.pglmm_fit <- function(x, newData, ...) {
-  profileGLMM_predict(x, newData$XFE, newData$XLat, newData$UCont, newData$UCat)
+  return(profileGLMM_predict(x, newData$XFE, newData$XLat, newData$UCont, newData$UCat))
 }

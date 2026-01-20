@@ -110,6 +110,8 @@ profileGLMM_postProcess = function(MCMC_Obj, modeClus='NG', comp_cooc = TRUE, al
         cen = array(apply(centroids, 2, rowMeans), dim = c(dim(centroids)[1], dim(centroids)[2]))
         pvec = array(apply(pvecPost, 2, rowMeans), dim = c(dim(pvecPost)[1], dim(pvecPost)[2]))
         gam = array(apply(gamma, 2, rowMeans), dim = c(dim(gamma)[1], dim(gamma)[2]))
+        rownames(cen) = MCMC_Obj$names$UCont
+        rownames(gam) = MCMC_Obj$names$Lat
       }
       rep_clust = list(Zstar = Zstar,
                        Kstar = Kstar,
