@@ -40,7 +40,6 @@
 #' theta0 = exposure_data$theta0
 #' covList = {}
 #' covList$FE = c('X')
-
 #' covList$RE = c('t')
 #' covList$REunit = c('indiv')
 #'

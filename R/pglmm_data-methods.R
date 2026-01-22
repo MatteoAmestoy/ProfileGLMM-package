@@ -30,7 +30,7 @@ print.pglmm_data <- function(x, ...) {
   if (x$d$ZRE[1]==-1){
     cat("- No random effect \n")
   }else {
-    cat("-'", x$d$names$REunit ,"' level random effects  : '", x$d$names$RE,  "'\n")
+    cat("- '", x$d$names$REunit ,"' level random effects  : '", x$d$names$RE,  "'\n")
   }
   cat("- Latent clusters interacting with: '",x$d$names$Lat,  "'\n")
 

@@ -1,4 +1,4 @@
-#' @title Prediction of cluster memberships and outcomes
+#' @title Prediction of cluster memberships and outcomes (internal function for predict method)
 #' @description (This documentation is now for internal use only)
 #' @param object An object of class \code{pglmm_fit} .
 #' @param XFE A numeric matrix of fixed effects covariates for the prediction data.
