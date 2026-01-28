@@ -1,0 +1,105 @@
+---
+title: "Introduction to ProfileGLMM"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Introduction to ProfileGLMM}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+# Introduction
+In this document we present a simple workflow using the [ProfileGLMM](https://cran.r-project.org/web/packages/ProfileGLMM/refman/ProfileGLMM.html) pacakge applied to an Exposure inspired dataset.
+
+The (simulated) dataset can be loaded directly from the package: 
+
+```{r setup}
+library(ProfileGLMM)
+data("exposure_data")
+exp_data = exposure_data$df
+head(exp_data)
+```
+
+This dataset comprises 1500 individuals each observed at three different dates (4500 observations). For each of these observations we observe an individual characteristic **X**, two exposures **Exp1** and **Exp2** and an health outcome **Y**. The goal of this tutorial is to show how the ProfileGLMM package can perform a profile regression using a linear mixed model as an output. In other words the goal, here, is to identify clusters of exposures affecting the outcome and its relationship with the individual characteristics. The motivations for the analysis of such dataset can be found in [this paper](https://arxiv.org/pdf/2510.08304).
+
+# Model specifications
+
+The first step to perform profile regression is to preprocess the data: 
+
+```{r}
+covList = {}
+covList$FE = c('X')
+
+covList$RE = c('t')
+covList$REunit = c('indiv')
+
+covList$Lat = c('X')
+
+covList$Assign$Cont = c('Exp1','Exp2')
+covList$Assign$Cat = NULL
+
+covList$Y = c('Y')
+dataProfile = profileGLMM_preprocess(regType = 'linear',
+                                     covList = covList,
+                                     dataframe = exp_data,
+                                     nC = 30,
+                                     intercept = list(FE = T, RE = F, Lat = T))
+print(dataProfile)
+```
+
+The structure of the model is defined by the *covList* entry. The first set of variables define the outcome mixed model structure: the *FE* field contains the fixed effects covariates, the *RE* field the random effects covariates and *Reunit* its associated statistical unit. To complete the outcome model *Lat* indicates which covariates will interact with the latent clusters. The covariates to be clustered are indicated in the *Assign* field, with *Cont* and *Cat* fields respectively containing the continuous and categorical clustering covariates. 
+
+To complete the outcome model definition, the *regType* entry indicates that we want our outcome model to be a linear mixed model (as the output is continuous), and the intercept field which parts of the model require an intercept.
+
+Note that the **profileGLMM_preprocess** function initialises the parameters of the priors to default uninformative values that can be found here. Changing the default parameters can be easily changed on site.
+
+
+
+# Posterior sampling of the parameters and postprocessing of the MCMC chain
+
+Once the model is set up the we can sample parameters from the posterior: 
+
+```{r}
+MCMC_Obj = profileGLMM_Gibbs(model = dataProfile,
+                             nIt = 5000,
+                             nBurnIn = 2000)
+```
+
+**MCMC_Obj** returns all the *nIt - nBurnIn = 3000* MCMC samples. To verify the convergence of the MCMC chain it is a good practice to plot the traces of population constant parameters such as $\zeta$ or $\beta$:
+
+```{r}
+par(mfrow = c(1,2), col.sub="blue", cex.sub=2)
+plot(MCMC_Obj$zeta,ylab = 'zeta',xlab = 'samples')
+plot(MCMC_Obj$beta[1,],ylab = 'beta_1',xlab = 'samples')
+```
+
+
+These raw samples are then passed to the **profileGLMM_postProcess** function that estimates the population level parameters and their uncertainty as well as the characteristics of the representative clustering. 
+
+
+```{r}
+post_Obj = profileGLMM_postProcess(MCMC_Obj)
+#Fixed effects estimates
+summary(post_Obj)
+```
+
+One can also plot a representation of the representative clustering in the exposure space:
+
+```{r}
+plot(post_Obj,color = hcl.colors(9, palette = "Set 2"))
+```
+
+
+One can also predict cluster memberships of new points in a pre-processed format. Here we predict cluster membership on the training data and and, given that we have access to the true labels, we compare the resulting classification with the true one:
+
+```{r}
+pred = predict(post_Obj,dataProfile$d) 
+table(pred$classPred,exposure_data$theta0$Lat)
+```
+

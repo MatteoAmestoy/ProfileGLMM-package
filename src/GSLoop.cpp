@@ -89,7 +89,7 @@ List GSLoopCPP(
                                thetaClus.pVec);
       if ((it % 1000) == 0) {
         Rcout << "Iteration: " << it << "\n";
-        Rcout << "Nb of non 0 clusters: " << thetaAssign.non_0_clust << "\n";
+        //Rcout << "Nb of non 0 clusters: " << thetaAssign.non_0_clust << "\n";
       }
       if (it > nBurnIn) {
         StoreWL.slice(storeIdx) = thetaLMM.WLat;
@@ -117,7 +117,7 @@ List GSLoopCPP(
                                thetaClus.pVec);
       if ((it % 1000) == 0) {
         Rcout << "Iteration: " << it << "\n";
-        Rcout << "Nb of non 0 clusters: " << thetaAssign.non_0_clust << "\n";
+        //Rcout << "Nb of non 0 clusters: " << thetaAssign.non_0_clust << "\n";
       }
       if (it > nBurnIn) {
         StoreWL.slice(storeIdx) = thetaLMM.WLat;
