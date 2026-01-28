@@ -5,6 +5,8 @@
 \title{Print method for pglmm_fit}
 \usage{
 \method{print}{pglmm_fit}(x, ...)
+
+\method{print}{pglmm_fit}(x, ...)
 }
 \arguments{
 \item{x}{An object of class \code{pglmm_fit}}
@@ -12,5 +14,7 @@
 \item{...}{Additional arguments}
 }
 \description{
+Print method for pglmm_fit
+
 Print method for pglmm_fit
 }

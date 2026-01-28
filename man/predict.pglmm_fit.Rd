@@ -21,12 +21,12 @@
 (This documentation is now for internal use only)
 }
 \examples{
-# Load MCMC_Obj, the result of profileGLMM_Gibbs()
+# Load post_Obj, the result of profileGLMM_postProcess()
 data("examp")
-MCMC_Obj = examp$MCMC_Obj
+post_Obj = examp$post_Obj
 
-# Post-process the results
-post_Obj = profileGLMM_postProcess(MCMC_Obj, modeClus='LS')
+# run prediction for training data
+pred_Obj = predict(post_Obj,examp$dataProfile)
 
 
 }

@@ -3,7 +3,7 @@
 \docType{data}
 \name{examp}
 \alias{examp}
-\title{List of the different outputs of the main function for examples}
+\title{List of the different outputs of the main functions for the examples}
 \format{
 A list with 4 components:
 \describe{
@@ -20,6 +20,6 @@ Generated synthetically by the package authors.
 examp
 }
 \description{
-A list of the different outputs of the main function for examples
+A list of the different outputs of the main functions for the examples
 }
 \keyword{datasets}
