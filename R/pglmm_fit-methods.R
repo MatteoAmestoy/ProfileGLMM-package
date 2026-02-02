@@ -63,11 +63,11 @@ summary.pglmm_fit <- function(x, ...) {
 #' post_Obj = examp$post_Obj
 #'
 #' # run prediction for training data
-#' pred_Obj = predict(post_Obj,examp$dataProfile)
+#' pred_Obj = predict(post_Obj,examp$dataProfile$d)
 #'
 #'
-predict.pglmm_fit <- function(x, newData, ...) {
-  return(profileGLMM_predict(x, newData$XFE, newData$XLat, newData$UCont, newData$UCat))
+predict.pglmm_fit <- function(object, newData, ...) {
+  return(profileGLMM_predict(object, newData$XFE, newData$XLat, newData$UCont, newData$UCat))
 }
 
 
@@ -96,7 +96,8 @@ print.pglmm_fit <- function(x, ...) {
 #' @param ... Additional arguments\itemize{
 #' \item title : main title of the plot
 #' \item color : palette to be used }
-#'
+#' @importFrom grDevices hcl.colors
+#' @importFrom graphics grid layout legend lines mtext par plot.new points
 #' @exportS3Method plot pglmm_fit
 plot.pglmm_fit <- function(x, ...) {
   if (is.null(x$clust)) {
@@ -108,6 +109,8 @@ plot.pglmm_fit <- function(x, ...) {
   main_title <- if (!is.null(args$title)) args$title else "Cluster distributions"
   my_colors <- if (!is.null(args$color)) args$color else hcl.colors(nC, palette = "plasma")
 
+  nC <- x$clust$Kstar
+
   if(length(my_colors)!=nC){
     warning(paste0('Number of colors provided is incorrect, ',nC,' expected. reverting to default palette. '))
     my_colors <- hcl.colors(nC, palette = "plasma")
@@ -115,7 +118,7 @@ plot.pglmm_fit <- function(x, ...) {
 
 
 
-  nC <- x$clust$Kstar
+
   cen <- x$clust$cen
   coVar <- x$clust$coVar
   d <- nrow(cen) # Number of dimensions

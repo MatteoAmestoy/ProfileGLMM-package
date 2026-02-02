@@ -4,9 +4,11 @@
 \alias{predict.pglmm_fit}
 \title{Prediction of cluster memberships and outcomes}
 \usage{
-\method{predict}{pglmm_fit}(x, newData, ...)
+\method{predict}{pglmm_fit}(object, newData, ...)
 }
 \arguments{
+\item{object}{An object of class \code{pglmm_fit} .}
+
 \item{newData}{: A list with fields\itemize{
 \item XFE A numeric matrix of fixed effects covariates for the prediction data.
 \item XLat A numeric matrix of latent effect covariates.
@@ -14,8 +16,6 @@
 \item UCat A numeric matrix or vector of categorical profile variables. Defaults to \code{NULL}.}}
 
 \item{...}{Additional arguments}
-
-\item{object}{An object of class \code{pglmm_fit} .}
 }
 \description{
 (This documentation is now for internal use only)
@@ -26,7 +26,7 @@ data("examp")
 post_Obj = examp$post_Obj
 
 # run prediction for training data
-pred_Obj = predict(post_Obj,examp$dataProfile)
+pred_Obj = predict(post_Obj,examp$dataProfile$d)
 
 
 }

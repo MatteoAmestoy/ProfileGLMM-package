@@ -15,7 +15,7 @@ knitr::opts_chunk$set(
 ```
 
 # Introduction
-In this document we present a simple workflow using the [ProfileGLMM](https://cran.r-project.org/web/packages/ProfileGLMM/refman/ProfileGLMM.html) pacakge applied to an Exposure inspired dataset.
+In this document we present a simple workflow using the [ProfileGLMM](https://CRAN.R-project.org/package=ProfileGLMM) pacakge applied to an Exposure inspired dataset.
 
 The (simulated) dataset can be loaded directly from the package: 
 
