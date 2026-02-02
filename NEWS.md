@@ -1,5 +1,3 @@
-# ProfileGLMM 1.2.0
-
 # ProfileGLMM 1.1.0
 * profileGLMM_Gibbs and profileGLMM_preProcess now output S3 classes and some generic methods have been implemented
 * Added an introduction vignette
