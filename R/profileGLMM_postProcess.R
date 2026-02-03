@@ -25,6 +25,7 @@
 #'
 #' @export
 #' @importFrom stats quantile
+#' @importFrom Matrix Matrix
 #' @importFrom utils head
 #' @importFrom Spectrum estimate_k cluster_similarity
 #'
@@ -36,6 +37,8 @@
 #' # Post-process the results
 #' post_Obj = profileGLMM_postProcess(MCMC_Obj, modeClus='LS')
 #'
+#' # Removing the cooc matrix to save space
+#' post_Obj$coocMat = NULL
 #'
 profileGLMM_postProcess = function(MCMC_Obj, modeClus='NG', comp_cooc = TRUE, alpha = 0.05){
 
@@ -127,7 +130,7 @@ profileGLMM_postProcess = function(MCMC_Obj, modeClus='NG', comp_cooc = TRUE, al
     rep_clust = NULL
   }
   res = list(
-    coocMat = cooc,
+    coocMat = Matrix(cooc, sparse = TRUE),
     clust = rep_clust,
     pop = pop
   )

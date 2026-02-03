@@ -48,5 +48,7 @@ MCMC_Obj = examp$MCMC_Obj
 # Post-process the results
 post_Obj = profileGLMM_postProcess(MCMC_Obj, modeClus='LS')
 
+# Removing the cooc matrix to save space
+post_Obj$coocMat = NULL
 
 }
