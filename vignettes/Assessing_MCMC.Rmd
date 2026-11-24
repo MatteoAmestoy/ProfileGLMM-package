@@ -1,0 +1,168 @@
+---
+title: "Assessing MCMC Chain Convergence for ProfileGLMM"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Assessing MCMC Chain Convergence for ProfileGLMM}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.width = 7,
+  fig.height = 4.5
+)
+```
+
+```{r setup}
+library(ProfileGLMM)
+```
+
+## Overview
+
+`profileGLMM_Gibbs()` runs a single Markov chain per call. In practice, assessing convergence reliably requires:
+
+1. **Running multiple chains** with different starting values (or seeds) to verify that chains mix over the same posterior region rather than getting stuck in different modes or regions.
+2. **Inspecting line trace plots** (rather than point/scatter plots) across parameters of interest—not only concentration or summary quantities, but also regression coefficients ($\beta$) and variance/covariance components.
+3. **Using sufficient iterations and burn-in**, especially for complex or slower-mixing parameters.
+4. **Computing formal convergence diagnostics**—such as potential scale reduction ($\hat{R}$) and bulk/tail effective sample size (ESS)—using dedicated external packages such as `posterior` or `coda`.
+
+## Preprocessing the Data
+
+We start by loading the `exposure_data` dataset and preparing the preprocessed model object via `profileGLMM_preprocess()`. Note that in real analyses you may want to increase the number of iterations (`nIt`) and burn-in (`nBurnIn`) beyond the short settings used here for illustration.
+
+```{r preprocess}
+set.seed(1)
+data("exposure_data")
+exp_data <- exposure_data$df
+theta0 <- exposure_data$theta0
+
+covList <- list(
+  FE = c("X"),
+  RE = c("t"),
+  REunit = c("indiv"),
+  Lat = c("X"),
+  Assign = list(Cont = c("Exp1", "Exp2"), Cat = NULL),
+  Y = c("Y")
+)
+
+dataProfile <- profileGLMM_preprocess(
+  regType = "linear",
+  covList = covList,
+  dataframe = exp_data,
+  nC = 30,
+  intercept = list(FE = TRUE, RE = FALSE, Lat = TRUE)
+)
+```
+
+## Running Multiple Chains with Distinct Starting Values
+
+To run multiple chains, we call `profileGLMM_Gibbs()` multiple times and refresh the initial parameter values between chains using `theta_init()`.
+
+```{r run-chains}
+nIt <- 800
+nBurnIn <- 200
+
+# Chain 1
+dataProfile$theta$betaFE
+MCMC_Obj <- profileGLMM_Gibbs(
+  model = dataProfile,
+  nIt = nIt,
+  nBurnIn = nBurnIn
+)
+
+# Chain 2 (fresh initialization from prior)
+dataProfile$theta <- theta_init(dataProfile$prior, dataProfile$params)
+dataProfile$theta$betaFE
+MCMC_Obj2 <- profileGLMM_Gibbs(
+  model = dataProfile,
+  nIt = nIt,
+  nBurnIn = nBurnIn
+)
+
+# Chain 3 (fresh initialization from prior)
+dataProfile$theta <- theta_init(dataProfile$prior, dataProfile$params)
+dataProfile$theta$betaFE
+MCMC_Obj3 <- profileGLMM_Gibbs(
+  model = dataProfile,
+  nIt = nIt,
+  nBurnIn = nBurnIn
+)
+```
+
+## Visual Inspection via Line Trace Plots
+
+Connected line plots (`type = "l"`) make it easier to spot trends, slow mixing, or poor overlap across chains than point/scatter plots. Below, we compare the retained draws for the first row of `beta` across the three chains.
+
+```{r trace-plot}
+y_range <- range(
+  MCMC_Obj$beta[1, ],
+  MCMC_Obj2$beta[1, ],
+  MCMC_Obj3$beta[1, ]
+)
+
+plot(
+  MCMC_Obj$beta[1, ],
+  type = "l",
+  ylim = y_range,
+  xlab = "Post-burn-in iteration",
+  ylab = "beta[1, ]",
+  main = "Line trace plot across three chains"
+)
+lines(MCMC_Obj2$beta[1, ], col = "red")
+lines(MCMC_Obj3$beta[1, ], col = "blue")
+legend(
+  "topright",
+  legend = c("Chain 1", "Chain 2", "Chain 3"),
+  col = c("black", "red", "blue"),
+  lty = 1,
+  bty = "n"
+)
+```
+
+If chains do not overlap well or show persistent drift, increase `nIt` and `nBurnIn` and re-check both `beta` and covariance/random-effect parameters.
+
+## Quantitative Diagnostics with `posterior`
+
+Because `ProfileGLMM` delegates formal MCMC diagnostics to specialized packages, we can convert the multi-chain draws into a `posterior` draws array (`draws_array`) and compute summary statistics including `rhat`, `ess_bulk`, and `ess_tail`.
+
+```{r diagnostics, eval = requireNamespace("posterior", quietly = TRUE)}
+library(posterior)
+
+chains_list <- list(
+  t(MCMC_Obj$beta),
+  t(MCMC_Obj2$beta),
+  t(MCMC_Obj3$beta)
+)
+
+n_draws <- nrow(chains_list[[1]])
+n_chains <- length(chains_list)
+n_params <- ncol(chains_list[[1]])
+
+param_names <- if (!is.null(rownames(MCMC_Obj$beta))) {
+  rownames(MCMC_Obj$beta)
+} else {
+  paste0("beta_", seq_len(n_params))
+}
+
+draws_arr <- array(
+  0,
+  dim = c(n_draws, n_chains, n_params),
+  dimnames = list(
+    iteration = seq_len(n_draws),
+    chain = paste0("chain_", seq_len(n_chains)),
+    variable = param_names
+  )
+)
+
+for (c_idx in seq_len(n_chains)) {
+  draws_arr[, c_idx, ] <- chains_list[[c_idx]]
+}
+
+beta_draws <- as_draws_array(draws_arr)
+summarise_draws(beta_draws, "mean", "rhat", "ess_bulk", "ess_tail")
+```
+
+As a general rule of thumb, $\hat{R}$ close to `1.00` (commonly `< 1.01`) alongside healthy bulk and tail effective sample sizes indicates much more reliable mixing than a short run with high autocorrelation.

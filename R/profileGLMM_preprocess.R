@@ -1,60 +1,93 @@
-#' Preprocess the data from a list describing the profile LMM model
-#' @param regType A string, current possibilities: linear or probit
-#' @param covList A list with fields:\itemize{
-#' \item  FE fixed effect covariates names/index in dataframe
-#' \item  RE random effect covariates names/index in dataframe
-#' \item  Lat latent effect covariates names/index in dataframe
-#' \item  Assign assignement variables list with fields:\itemize{
-#'        \item  Cont Continuous variables names/index in dataframe
-#'        \item  Cat Categorical variables names/index in dataframe
-#' }
-#' \item  REunit statistical unit of the RE colomn name/index
-#' \item  Y outcome (Continuous)}
-#' @param dataframe A dataframe containing outcome anf covariates
-#' @param nC int: maximal number of cluster for the DP truncation
-#' @param intercept (optionnal): A list with fields\itemize{
-#' \item  RE bool indicating if FE have an intercept
-#' \item  FE bool indicating if RE have an intercept
-#' \item  Lat bool indicating if Latent have an intercept}
+#' Preprocess data for a Bayesian Profile-GLMM model
 #'
-#' @returns An object of class \code{pglmm_data}. This is a list with\itemize{
-#' \item  d dictionary with  [XFE,XRE,XLat,UCont,UCat,ZRE] design matrices
-#' \item  [[params]] list of the parameters of the data\itemize{
-#'                  \item  n int nb of obs
-#'                  \item  qFE int, number of covariates of FE
-#'                  \item  nRE int, number of stat units of RE
-#'                  \item  qRE int, number of covariates of RE
-#'                  \item  qLat int, number of covariates interacting with the
-#'                                   latent clusters
-#'                  \item  qUCont int, number of continuous clustering covariates
-#'                  \item  qUCat int, number of categorical clustering covariates
-#'                  \item  nC int, maximal number of clusters}
-#' \item prior a list with all the specification of the default prior used
-#' \item theta a list with a default set of parameters to start the chain, drawn from the prior
-#' \item regType an int. Currently 0 for linear, 1 for probit}
+#' Prepares design matrices, model dimensions, default priors, and initial
+#' parameter values from a covariate specification list and data frame.
+#'
+#' @param regType Character string specifying the regression family; currently
+#'   \code{"linear"} or \code{"probit"} (for binary outcomes).
+#' @param covList A named list specifying the outcome and covariate terms.
+#'   Supported elements are:
+#'   \itemize{
+#'     \item{\code{Y}: (Required) Name or index of the outcome column in
+#'       \code{dataframe}.}
+#'     \item{\code{FE}: (Optional) Names or indices of fixed-effect covariates in
+#'       \code{dataframe} (\code{NULL} if none; requires
+#'       \code{intercept$FE = TRUE} if \code{NULL}).}
+#'     \item{\code{RE}: (Optional) Names or indices of random-effect covariates
+#'       in \code{dataframe} (\code{NULL} if none).}
+#'     \item{\code{REunit}: (Conditional) Name or index of the grouping/subject
+#'       identifier column in \code{dataframe} defining hierarchical or
+#'       longitudinal units for random effects. Required when \code{RE} is not
+#'       \code{NULL}.}
+#'     \item{\code{Lat}: (Optional) Names or indices of covariates in
+#'       \code{dataframe} with latent-cluster-specific effects/interactions
+#'       (\code{NULL} if none; requires
+#'       \code{intercept$Lat = TRUE} if \code{NULL})..}
+#'     \item{\code{Assign}: (Required) List containing \code{Cont} (names/indices
+#'       of continuous clustering covariates) and/or \code{Cat} (names/indices
+#'       of categorical clustering covariates) governing latent cluster
+#'       assignment. At least one of \code{Cont} or \code{Cat} must be
+#'       non-empty.}
+#'   }
+#' @param dataframe A \code{data.frame} containing the outcome and specified
+#'   covariate columns.
+#' @param nC Integer giving the maximum number of clusters for the Dirichlet
+#'   process truncation.
+#' @param intercept Optional named list of logicals controlling intercept
+#'   inclusion (default \code{list(FE = TRUE, RE = TRUE, Lat = TRUE)}):
+#'   \itemize{
+#'     \item{\code{FE}: Logical indicating whether to include a fixed-effect
+#'       intercept.}
+#'     \item{\code{RE}: Logical indicating whether to include a random-effect
+#'       intercept (when random effects are used).}
+#'     \item{\code{Lat}: Logical indicating whether to include a
+#'       latent-cluster-specific intercept.}
+#'   }
+#'
+#' @return An object of class \code{"pglmm_data"}, which is a list containing:
+#'   \itemize{
+#'     \item{\code{d}: List containing the processed outcome (\code{Y}),
+#'       covariate/grouping names (\code{names}), and design matrices/vectors
+#'       (\code{XFE}, \code{XRE}, \code{XLat}, \code{UCont}, \code{UCat},
+#'       \code{ZRE}; \code{NULL} where omitted).}
+#'     \item{\code{params}: List of dataset and model dimensions, including
+#'       \code{n} (number of observations), \code{qFE} (number of fixed-effect
+#'       columns including intercept if enabled), \code{nRE} (number of random-effect
+#'       groups), \code{qRE} (number of random-effect columns), \code{qLat}
+#'       (number of latent-interaction columns), \code{qUCont} (number of
+#'       continuous clustering variables), \code{qUCat} (number of categorical
+#'       clustering variables), \code{catInd} (category index mapping), and
+#'       \code{nC} (maximum number of clusters).}
+#'     \item{\code{prior}: List of default prior specifications generated by
+#'       \code{\link{prior_init}}.}
+#'     \item{\code{theta}: List of initial parameter values drawn from the prior
+#'       via \code{\link{theta_init}}.}
+#'     \item{\code{regType}: Integer code for the regression type (\code{0} for
+#'       \code{"linear"}, \code{1} for \code{"probit"}).}
+#'   }
 #' @export
 #'
 #' @examples
 #' data("exposure_data")
-#' exp_data = exposure_data$df
-#' theta0 = exposure_data$theta0
-#' covList = {}
-#' covList$FE = c('X')
-#' covList$RE = c('t')
-#' covList$REunit = c('indiv')
+#' exp_data <- exposure_data$df
+#' theta0 <- exposure_data$theta0
 #'
-#' covList$Lat = c('X')
+#' covList <- list(
+#'   Y = "Y",
+#'   FE = "X",
+#'   RE = "t",
+#'   REunit = "indiv",
+#'   Lat = "X",
+#'   Assign = list(Cont = c("Exp1", "Exp2"), Cat = NULL)
+#' )
 #'
-#' covList$Assign$Cont = c('Exp1','Exp2')
-#' covList$Assign$Cat = NULL
-#'
-#' covList$Y = c('Y')
-#' dataProfile = profileGLMM_preprocess(regType = 'linear',
-#'                                      covList = covList,
-#'                                      dataframe = exp_data,
-#'                                      nC = 30,
-#'                                      intercept = list(FE = TRUE, RE = FALSE, Lat = TRUE))
-
+#' dataProfile <- profileGLMM_preprocess(
+#'   regType = "linear",
+#'   covList = covList,
+#'   dataframe = exp_data,
+#'   nC = 30,
+#'   intercept = list(FE = TRUE, RE = FALSE, Lat = TRUE)
+#' )
 
 profileGLMM_preprocess <- function(regType, covList, dataframe, nC, intercept = list(FE=TRUE,RE=TRUE,Lat =TRUE)) {
 

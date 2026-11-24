@@ -17,12 +17,12 @@ print.pglmm_fit <- function(x, ...) {
   invisible(x)
 }
 
-#' Print method for pglmm_fit
+#' Summary method for pglmm_fit
 #'
 #' @param x An object of class \code{pglmm_fit}
 #' @param ... Additional arguments
 #'
-#' @exportS3Method print pglmm_fit
+#' @exportS3Method summary pglmm_fit
 summary.pglmm_fit <- function(x, ...) {
   cat("--- pglmm_fit summary ---\n")
 
@@ -71,24 +71,6 @@ predict.pglmm_fit <- function(object, newData, ...) {
 }
 
 
-#' Print method for pglmm_fit
-#'
-#' @param x An object of class \code{pglmm_fit}
-#' @param ... Additional arguments
-#'
-#' @exportS3Method print pglmm_fit
-print.pglmm_fit <- function(x, ...) {
-  cat("--- pglmm_fit object containing the postprocessing of the MCMC samples ---\n")
-  # Use a safe check (like is.null) to prevent errors during printing
-  if (!is.null(x$clust$Kstar)) {
-    cat("-- Representative clustering characteristics: \n")
-    cat("Method used:", x$clust$mode, "\n")
-    cat("Clusters found:", x$clust$Kstar, "\n")
-  } else {
-    cat("Representative clustering not computed.\n")
-  }
-  invisible(x)
-}
 
 #' Plot method for pglmm_fit continuous covariates cluster characteristics
 #'
@@ -103,13 +85,13 @@ plot.pglmm_fit <- function(x, ...) {
   if (is.null(x$clust)) {
     stop("No representative clustering provided.")
   }
+  nC <- x$clust$Kstar
 
   # 1. Extract parameters
   args <- list(...)
   main_title <- if (!is.null(args$title)) args$title else "Cluster distributions"
   my_colors <- if (!is.null(args$color)) args$color else hcl.colors(nC, palette = "plasma")
 
-  nC <- x$clust$Kstar
 
   if(length(my_colors)!=nC){
     warning(paste0('Number of colors provided is incorrect, ',nC,' expected. reverting to default palette. '))

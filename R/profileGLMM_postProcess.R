@@ -128,12 +128,22 @@ profileGLMM_postProcess = function(MCMC_Obj, modeClus='NG', comp_cooc = TRUE, al
                        pvec = pvec)}
   }else{
     rep_clust = NULL
+    cooc = NULL
   }
-  res = list(
-    coocMat = Matrix(cooc, sparse = TRUE),
-    clust = rep_clust,
-    pop = pop
-  )
+  if (is.null(cooc)){
+    res = list(
+      coocMat = cooc,
+      clust = rep_clust,
+      pop = pop
+    )
+  }else{
+    res = list(
+      coocMat = Matrix(cooc, sparse = TRUE),
+      clust = rep_clust,
+      pop = pop
+    )
+  }
+
   class(res) <- "pglmm_fit"
   return(res)
 }
