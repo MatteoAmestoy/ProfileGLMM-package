@@ -19,7 +19,7 @@ print.pglmm_mcmc <- function(x, ...) {
 #'   draw).
 #'
 #' @return A thinned object of class \code{"pglmm_mcmc"}.
-#' @exportS3Method thin_chain pglmm_mcmc
+#' @export thin_chain
 thin_chain <- function(x, thin = 1) {
   if (!inherits(x, "pglmm_mcmc")) {
     stop("'x' must be a 'pglmm_mcmc' object.")
@@ -75,7 +75,7 @@ thin_chain <- function(x, thin = 1) {
 #'   (default \code{1}).
 #'
 #' @return An object of class \code{"pglmm_mcmc"} containing the combined draws.
-#' @exportS3Method combine_chains pglmm_mcmc
+#' @export combine_chains
 combine_chains <- function(x, thin = 1) {
   if (!is.list(x)) {
     stop("'x' must be a list.")

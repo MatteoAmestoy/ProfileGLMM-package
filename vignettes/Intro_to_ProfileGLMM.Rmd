@@ -57,7 +57,7 @@ The structure of the model is defined by the *covList* entry. The first set of v
 
 To complete the outcome model definition, the *regType* entry indicates that we want our outcome model to be a linear mixed model (as the output is continuous), and the intercept field which parts of the model require an intercept.
 
-Note that the **profileGLMM_preprocess** function initialises the parameters of the priors to default uninformative values that can be found here. Changing the default parameters can be easily changed on site.
+Note that the **profileGLMM_preprocess** function initialises the parameters of the priors to default uninformative values. Changing the default parameters (both for priors and initial parameters) can be easily changed on site, a detailed example can be found in a dedicated vignette.
 
 
 
@@ -78,7 +78,7 @@ par(mfrow = c(1,2), col.sub="blue", cex.sub=2)
 plot(MCMC_Obj$zeta,ylab = 'zeta',xlab = 'samples')
 plot(MCMC_Obj$beta[1,],ylab = 'beta_1',xlab = 'samples')
 ```
-
+More details and advanced feature on chain convergence assessment can be found in a separate vignette.
 
 These raw samples are then passed to the **profileGLMM_postProcess** function that estimates the population level parameters and their uncertainty as well as the characteristics of the representative clustering. 
 

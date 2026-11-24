@@ -54,7 +54,7 @@ profileGLMM_postProcess = function(MCMC_Obj, modeClus='NG', comp_cooc = TRUE, al
   pop = {}
 
 
-  betaFE = apply(MCMC_Obj$beta, 1, mean)
+  betaFE = rowMeans(MCMC_Obj$beta)
   betaFECI = apply(MCMC_Obj$beta, 1, quantile,c(alpha/2,1-alpha/2))
   pop$betaFE = as.data.frame(rbind(betaFE,betaFECI))
   colnames(pop$betaFE) = MCMC_Obj$names$FE
@@ -100,10 +100,11 @@ profileGLMM_postProcess = function(MCMC_Obj, modeClus='NG', comp_cooc = TRUE, al
         for (it in 1:nSim){
           cIdx = 1
           for (c_ in unique(Zstar)){
-            pvecPost[,cIdx,j] = apply( MCMC_Obj$pvec[, MCMC_Obj$Z[,it][which(Zstar == c_)]+1,it,drop=F],1,mean)
-            centroids[,cIdx,j] = apply( MCMC_Obj$muClus[, MCMC_Obj$Z[,it][which(Zstar == c_)]+1,it,drop=F],1,mean)
-            coVar[,,cIdx] =  coVar[,,cIdx] +apply( MCMC_Obj$PhiClus[[it]][,,MCMC_Obj$Z[,it][which(Zstar == c_)]+1,drop=F],c(1, 2), mean)/nSim
-            gamma[,cIdx,j] = apply(MCMC_Obj$gamma[,MCMC_Obj$Z[,it][which(Zstar == c_)]+1,it,drop=F],1,mean)
+            idx_c <- MCMC_Obj$Z[, it][which(Zstar == c_)] + 1
+            pvecPost[, cIdx, j]  = rowMeans(MCMC_Obj$pvec[, idx_c, it, drop = FALSE], dims = 1)
+            centroids[, cIdx, j] = rowMeans(MCMC_Obj$muClus[, idx_c, it, drop = FALSE], dims = 1)
+            gamma[, cIdx, j]     = rowMeans(MCMC_Obj$gamma[, idx_c, it, drop = FALSE], dims = 1)
+            coVar[,,cIdx] =  coVar[,,cIdx] +apply( MCMC_Obj$PhiClus[[it]][,,idx_c,drop=F],c(1, 2), mean)/nSim
             optTransf[Zstar == c_] =  cIdx
             cIdx = cIdx+1
           }

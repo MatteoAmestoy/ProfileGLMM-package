@@ -2,7 +2,7 @@
 % Please edit documentation in R/pglmm_fit-methods.R
 \name{summary.pglmm_fit}
 \alias{summary.pglmm_fit}
-\title{Print method for pglmm_fit}
+\title{Summary method for pglmm_fit}
 \usage{
 \method{summary}{pglmm_fit}(x, ...)
 }
@@ -12,5 +12,5 @@
 \item{...}{Additional arguments}
 }
 \description{
-Print method for pglmm_fit
+Summary method for pglmm_fit
 }

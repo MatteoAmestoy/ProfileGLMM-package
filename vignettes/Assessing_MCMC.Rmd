@@ -34,7 +34,6 @@ library(ProfileGLMM)
 We start by loading the `exposure_data` dataset and preparing the preprocessed model object via `profileGLMM_preprocess()`. Note that in real analyses you may want to increase the number of iterations (`nIt`) and burn-in (`nBurnIn`) beyond the short settings used here for illustration.
 
 ```{r preprocess}
-set.seed(1)
 data("exposure_data")
 exp_data <- exposure_data$df
 theta0 <- exposure_data$theta0
@@ -62,6 +61,7 @@ dataProfile <- profileGLMM_preprocess(
 To run multiple chains, we call `profileGLMM_Gibbs()` multiple times and refresh the initial parameter values between chains using `theta_init()`.
 
 ```{r run-chains}
+set.seed(1)
 nIt <- 800
 nBurnIn <- 200
 
@@ -96,7 +96,7 @@ MCMC_Obj3 <- profileGLMM_Gibbs(
 
 Connected line plots (`type = "l"`) make it easier to spot trends, slow mixing, or poor overlap across chains than point/scatter plots. Below, we compare the retained draws for the first row of `beta` across the three chains.
 
-```{r trace-plot}
+```{r trace-plot-beta}
 y_range <- range(
   MCMC_Obj$beta[1, ],
   MCMC_Obj2$beta[1, ],
@@ -108,11 +108,44 @@ plot(
   type = "l",
   ylim = y_range,
   xlab = "Post-burn-in iteration",
-  ylab = "beta[1, ]",
+  ylab = "FE intercept",
   main = "Line trace plot across three chains"
 )
 lines(MCMC_Obj2$beta[1, ], col = "red")
 lines(MCMC_Obj3$beta[1, ], col = "blue")
+legend(
+  "topright",
+  legend = c("Chain 1", "Chain 2", "Chain 3"),
+  col = c("black", "red", "blue"),
+  lty = 1,
+  bty = "n"
+)
+```
+```{r trace-plot-zeta}
+y_range <- range(
+  MCMC_Obj$zeta,
+  MCMC_Obj2$zeta,
+  MCMC_Obj3$zeta
+)
+
+plot(
+  MCMC_Obj$zeta,
+  type = "l",
+  ylim = y_range,
+  xlab = "Post-burn-in iteration",
+  ylab = "zeta",
+  main = "Line trace plot across three chains"
+)
+plot(
+  MCMC_Obj$zeta,
+  type = "l",
+  ylim = y_range,
+  xlab = "Post-burn-in iteration",
+  ylab = "zeta",
+  main = "Line trace plot across three chains"
+)
+lines(MCMC_Obj2$zeta, col = "red")
+lines(MCMC_Obj3$zeta, col = "blue")
 legend(
   "topright",
   legend = c("Chain 1", "Chain 2", "Chain 3"),
@@ -131,38 +164,45 @@ Because `ProfileGLMM` delegates formal MCMC diagnostics to specialized packages,
 ```{r diagnostics, eval = requireNamespace("posterior", quietly = TRUE)}
 library(posterior)
 
-chains_list <- list(
-  t(MCMC_Obj$beta),
-  t(MCMC_Obj2$beta),
-  t(MCMC_Obj3$beta)
-)
-
-n_draws <- nrow(chains_list[[1]])
-n_chains <- length(chains_list)
-n_params <- ncol(chains_list[[1]])
-
-param_names <- if (!is.null(rownames(MCMC_Obj$beta))) {
-  rownames(MCMC_Obj$beta)
-} else {
-  paste0("beta_", seq_len(n_params))
-}
+# preparing the draws in posterior format (3D array draws x chains x params )
+n_draws = nIt-nBurnIn # nb of draws per chain
+n_chains = 3 # nb of chains
+param_names = list('FE_int', 'FE_slope','Zeta') # parameter we want to check the convergence
 
 draws_arr <- array(
   0,
-  dim = c(n_draws, n_chains, n_params),
+  dim = c(n_draws, 
+          n_chains, # number of chains
+          length(param_names)  # Fe intercept and slope plus zeta 
+          ),
   dimnames = list(
     iteration = seq_len(n_draws),
     chain = paste0("chain_", seq_len(n_chains)),
     variable = param_names
   )
 )
-
-for (c_idx in seq_len(n_chains)) {
-  draws_arr[, c_idx, ] <- chains_list[[c_idx]]
-}
+draws_arr[, 1, ] = cbind(t(MCMC_Obj$beta), MCMC_Obj$zeta)
+draws_arr[, 2, ] = cbind(t(MCMC_Obj2$beta), MCMC_Obj2$zeta)
+draws_arr[, 3, ] = cbind(t(MCMC_Obj3$beta), MCMC_Obj3$zeta)
 
 beta_draws <- as_draws_array(draws_arr)
 summarise_draws(beta_draws, "mean", "rhat", "ess_bulk", "ess_tail")
 ```
 
-As a general rule of thumb, $\hat{R}$ close to `1.00` (commonly `< 1.01`) alongside healthy bulk and tail effective sample sizes indicates much more reliable mixing than a short run with high autocorrelation.
+As a general rule of thumb, $\hat{R}$ close to `1.00` (commonly `< 1.01`) alongside healthy bulk and tail effective sample sizes indicates reliable mixing. Here the `zeta` chain seems to require longer chain ($\hat{R} = 1.02$). Replacing `nIt = 8000` and `nBurnIn = 2000` lowers $\hat{R}$ to 1.004, indicating a better convergence of the chain. 
+
+
+## Combining Chains for Post-Processing
+
+Once convergence diagnostics are satisfactory, you can merge the `pglmm_mcmc` objects into a single `pglmm_mcmc` object using `combine_chains()` and pass the combined result to `profileGLMM_postProcess()`. In the following example we thin each chain taking one sample out of three, keeping the combined chain's length equal to the original ones. We do so for sake of speed and show comented an example of how the combined chain would directly fit in the `profileGLMM_postProcess` function.
+
+```{r combine-chains}
+combined_mcmc <- combine_chains(list(MCMC_Obj, MCMC_Obj2, MCMC_Obj3),3)
+
+#post_single <- profileGLMM_postProcess(MCMC_Obj)
+#post_combined <- profileGLMM_postProcess(combined_mcmc)
+
+#summary(post_single)
+#summary(post_combined)
+```
+
