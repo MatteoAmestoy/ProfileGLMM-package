@@ -75,8 +75,8 @@ MCMC_Obj = profileGLMM_Gibbs(model = dataProfile,
 
 ```{r}
 par(mfrow = c(1,2), col.sub="blue", cex.sub=2)
-plot(MCMC_Obj$zeta,ylab = 'zeta',xlab = 'samples')
-plot(MCMC_Obj$beta[1,],ylab = 'beta_1',xlab = 'samples')
+plot(MCMC_Obj$zeta,type = "l",ylab = 'zeta',xlab = 'samples')
+plot(MCMC_Obj$beta[1,],type = "l",ylab = 'beta_1',xlab = 'samples')
 ```
 More details and advanced feature on chain convergence assessment can be found in a separate vignette.
 
