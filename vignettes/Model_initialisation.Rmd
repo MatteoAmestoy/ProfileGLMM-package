@@ -1,0 +1,135 @@
+---
+
+title: "Setting up priors and initial parameters in a Profile GLMM model"
+
+output: rmarkdown::html_vignette
+
+vignette: >
+
+  %\VignetteIndexEntry{Setting up priors and initial parameters in a Profile GLMM model}
+
+  %\VignetteEngine{knitr::rmarkdown}
+
+  %\VignetteEncoding{UTF-8}
+
+---
+
+
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+
+
+```{r setup}
+library(ProfileGLMM)
+
+data("exposure_data")
+exp_data = exposure_data$df
+head(exp_data)
+```
+
+
+
+Here we work with the simulated dataset presented in the introduction vignette and set up the model in the same way:
+
+
+
+```{r}
+covList = {}
+covList$FE = c('X')
+
+covList$RE = c('t')
+covList$REunit = c('indiv')
+
+covList$Lat = c('X')
+
+covList$Assign$Cont = c('Exp1','Exp2')
+covList$Assign$Cat = NULL
+
+covList$Y = c('Y')
+dataProfile = profileGLMM_preprocess(regType = 'linear',
+                                     covList = covList,
+                                     dataframe = exp_data,
+                                     nC = 30,
+                                     intercept = list(FE = T, RE = F, Lat = T))
+print(dataProfile)
+```
+
+
+
+The `profileGLMM_preprocess()` function creates the quantities needed to sample from the posterior using `profileGLMM_Gibbs()`. Alongside the design matrices and model metadata, it sets default weakly informative priors in the `$prior` element:
+
+
+
+```{r}
+print(dataProfile$prior)
+```
+
+
+
+Using these initial priors, `profileGLMM_preprocess()` draws starting values for the MCMC chain and stores them in `$theta`:
+
+
+
+```{r}
+print(dataProfile$theta)
+```
+
+
+
+## Setting Custom Initial Values
+
+
+
+If you want to set specific starting values to ad-hoc values, you can edit `$theta` directly:
+
+
+
+```{r}
+# Set the fixed-effect intercept starting value to 10
+dataProfile$theta$betaFE[1] = 10
+```
+
+
+
+## Redrawing Initial Parameters with `theta_init()`
+
+
+
+To draw a fresh set of starting values from the prior—for example, to initialize a second independent MCMC chain—use `theta_init()`:
+
+
+
+```{r}
+print(paste("Old FE intercept parameter:", dataProfile$theta$betaFE[1]))
+
+dataProfile$theta = theta_init(dataProfile$prior, dataProfile$params)
+
+print(paste("New FE intercept parameter:", dataProfile$theta$betaFE[1]))
+```
+
+
+
+## Modifying Prior Hyperparameters
+
+
+
+Finally, you can modify prior hyperparameters directly in `$prior` before running `profileGLMM_Gibbs()`. If you want the initial parameters to reflect the updated prior, call `theta_init()` again afterward:
+
+
+
+```{r}
+# Set a stronger penalty on the fixed-effect prior
+dataProfile$prior$FE$lambda = 100
+
+# Redraw initial values using the updated prior
+dataProfile$theta = theta_init(dataProfile$prior, dataProfile$params)
+
+# Check the updated initial fixed-effect parameters
+print(dataProfile$theta$betaFE)
+```

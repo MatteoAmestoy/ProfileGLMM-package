@@ -25,7 +25,7 @@ library(ProfileGLMM)
 `profileGLMM_Gibbs()` runs a single Markov chain per call. In practice, assessing convergence reliably requires:
 
 1. **Running multiple chains** with different starting values (or seeds) to verify that chains mix over the same posterior region rather than getting stuck in different modes or regions.
-2. **Inspecting line trace plots** (rather than point/scatter plots) across parameters of interest—not only concentration or summary quantities, but also regression coefficients ($\beta$) and variance/covariance components.
+2. **Inspecting line trace plots** (rather than point/scatter plots) across parameters of interest.
 3. **Using sufficient iterations and burn-in**, especially for complex or slower-mixing parameters.
 4. **Computing formal convergence diagnostics**—such as potential scale reduction ($\hat{R}$) and bulk/tail effective sample size (ESS)—using dedicated external packages such as `posterior` or `coda`.
 
@@ -94,7 +94,7 @@ MCMC_Obj3 <- profileGLMM_Gibbs(
 
 ## Visual Inspection via Line Trace Plots
 
-Connected line plots (`type = "l"`) make it easier to spot trends, slow mixing, or poor overlap across chains than point/scatter plots. Below, we compare the retained draws for the first row of `beta` across the three chains.
+Connected line plots (`type = "l"`) make it easier to spot trends, slow mixing, or poor overlap across chains than point/scatter plots. Below, we compare the retained draws for the first row of `beta` and `zeta` across the three chains.
 
 ```{r trace-plot-beta}
 y_range <- range(
@@ -194,7 +194,7 @@ As a general rule of thumb, $\hat{R}$ close to `1.00` (commonly `< 1.01`) alongs
 
 ## Combining Chains for Post-Processing
 
-Once convergence diagnostics are satisfactory, you can merge the `pglmm_mcmc` objects into a single `pglmm_mcmc` object using `combine_chains()` and pass the combined result to `profileGLMM_postProcess()`. In the following example we thin each chain taking one sample out of three, keeping the combined chain's length equal to the original ones. We do so for sake of speed and show comented an example of how the combined chain would directly fit in the `profileGLMM_postProcess` function.
+Once convergence diagnostics are satisfactory, you can merge the `pglmm_mcmc` objects into a single `pglmm_mcmc` object using `combine_chains()` and pass the combined result to `profileGLMM_postProcess()`. In the following example we thin each chain taking one sample out of three, keeping the combined chain's length equal to the original ones. We do so for sake of speed and show a commented an example of how the combined chain would directly fit in the `profileGLMM_postProcess` function.
 
 ```{r combine-chains}
 combined_mcmc <- combine_chains(list(MCMC_Obj, MCMC_Obj2, MCMC_Obj3),3)
