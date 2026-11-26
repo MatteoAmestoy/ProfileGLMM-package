@@ -32,7 +32,7 @@ thin_chain <- function(x, thin = 1) {
   thin <- as.integer(thin)
 
   # Fixed effects are required to have at least an intercept
-  n_kept <- if (!is.null(dim(x$beta))) tail(dim(x$beta), 1) else NULL
+  n_kept <- if (!is.null(dim(x$beta))) dim(x$beta)[2] else NULL
   if (is.null(n_kept)) {
     stop("Could not determine the number of retained draws from 'x$beta'.")
   }
