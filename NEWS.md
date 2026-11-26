@@ -1,4 +1,4 @@
-# ProfileGLMM 1.2.0
+
 
 * summary() now works for pglmm_fit objects
 * profileGLMM_postProcess() can handle cooc = False
