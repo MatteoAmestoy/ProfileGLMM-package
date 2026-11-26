@@ -4,10 +4,10 @@
 \alias{summary.pglmm_fit}
 \title{Summary method for pglmm_fit}
 \usage{
-\method{summary}{pglmm_fit}(x, ...)
+\method{summary}{pglmm_fit}(object, ...)
 }
 \arguments{
-\item{x}{An object of class \code{pglmm_fit}}
+\item{object}{An object of class \code{pglmm_fit}}
 
 \item{...}{Additional arguments}
 }

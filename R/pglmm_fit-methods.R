@@ -19,27 +19,27 @@ print.pglmm_fit <- function(x, ...) {
 
 #' Summary method for pglmm_fit
 #'
-#' @param x An object of class \code{pglmm_fit}
+#' @param object An object of class \code{pglmm_fit}
 #' @param ... Additional arguments
 #'
 #' @exportS3Method summary pglmm_fit
-summary.pglmm_fit <- function(x, ...) {
+summary.pglmm_fit <- function(object, ...) {
   cat("--- pglmm_fit summary ---\n")
 
   cat("-- Fixed effect estimates: \n")
-  print(x$pop$betaFE)
+  print(object$pop$betaFE)
   cat(" \n")
-  if (!is.null(x$clust$Kstar)) {
+  if (!is.null(object$clust$Kstar)) {
     cat("-- Representative clustering estimates -- \n")
-    cat("Method used:", x$clust$mode,", clusters found:", x$clust$Kstar, "\n")
+    cat("Method used:", object$clust$mode,", clusters found:", object$clust$Kstar, "\n")
     cat("Cluster centroids: \n")
-    print(x$clus$cen)
+    print(object$clus$cen)
     cat("Cluster interaction parameters: \n")
-    print(x$clus$gamma)
+    print(object$clus$gamma)
   } else {
     cat("Representative clustering not computed.\n")
   }
-  invisible(x)
+  invisible(object)
 }
 
 
