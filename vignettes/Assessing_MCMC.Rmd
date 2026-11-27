@@ -25,7 +25,7 @@ library(ProfileGLMM)
 `profileGLMM_Gibbs()` runs a single Markov chain per call. In practice, assessing convergence reliably requires:
 
 1. **Running multiple chains** with different starting values (or seeds) to verify that chains mix over the same posterior region rather than getting stuck in different modes or regions.
-2. **Inspecting line trace plots** (rather than point/scatter plots) across parameters of interest.
+2. **Inspecting line trace plots** across parameters of interest.
 3. **Using sufficient iterations and burn-in**, especially for complex or slower-mixing parameters.
 4. **Computing formal convergence diagnostics**—such as potential scale reduction ($\hat{R}$) and bulk/tail effective sample size (ESS)—using dedicated external packages such as `posterior` or `coda`.
 
@@ -62,8 +62,8 @@ To run multiple chains, we call `profileGLMM_Gibbs()` multiple times and refresh
 
 ```{r run-chains}
 set.seed(1)
-nIt <- 800
-nBurnIn <- 200
+nIt <- 400
+nBurnIn <- 100
 
 # Chain 1
 dataProfile$theta$betaFE
@@ -189,7 +189,7 @@ beta_draws <- as_draws_array(draws_arr)
 summarise_draws(beta_draws, "mean", "rhat", "ess_bulk", "ess_tail")
 ```
 
-As a general rule of thumb, $\hat{R}$ close to `1.00` (commonly `< 1.01`) alongside healthy bulk and tail effective sample sizes indicates reliable mixing. Here the `zeta` chain seems to require longer chain ($\hat{R} = 1.02$). Replacing `nIt = 8000` and `nBurnIn = 2000` lowers $\hat{R}$ to 1.004, indicating a better convergence of the chain. 
+As a general rule of thumb, $\hat{R}$ close to `1.00` (commonly `< 1.01`) alongside healthy bulk and tail effective sample sizes indicates reliable mixing. Here the `zeta` chain seems to require longer chain ($\hat{R} = 1.06$). Replacing `nIt = 8000` and `nBurnIn = 2000` lowers $\hat{R}$ to 1.004, indicating a better convergence of the chain. 
 
 
 ## Combining Chains for Post-Processing

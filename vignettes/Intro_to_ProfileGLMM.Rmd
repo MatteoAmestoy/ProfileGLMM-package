@@ -67,18 +67,18 @@ Once the model is set up the we can sample parameters from the posterior:
 
 ```{r}
 MCMC_Obj = profileGLMM_Gibbs(model = dataProfile,
-                             nIt = 5000,
-                             nBurnIn = 2000)
+                             nIt = 1000,
+                             nBurnIn = 200)
 ```
 
-**MCMC_Obj** returns all the *nIt - nBurnIn = 3000* MCMC samples. To verify the convergence of the MCMC chain it is a good practice to plot the traces of population constant parameters such as $\zeta$ or $\beta$:
+**MCMC_Obj** returns all the *nIt - nBurnIn = 800* MCMC samples. To verify the convergence of the MCMC chain it is a good practice to plot the traces of population constant parameters such as $\zeta$ or $\beta$:
 
 ```{r}
 par(mfrow = c(1,2), col.sub="blue", cex.sub=2)
 plot(MCMC_Obj$zeta,type = "l",ylab = 'zeta',xlab = 'samples')
 plot(MCMC_Obj$beta[1,],type = "l",ylab = 'beta_1',xlab = 'samples')
 ```
-More details and advanced feature on chain convergence assessment can be found in a separate vignette.
+In real data settings we recomment using higher numbers and multiple chains. More details and advanced features on chain convergence assessment can be found in a separate vignette.
 
 These raw samples are then passed to the **profileGLMM_postProcess** function that estimates the population level parameters and their uncertainty as well as the characteristics of the representative clustering. 
 
